@@ -1,0 +1,1202 @@
+[
+  {
+    "dialogue": "What time does the library open? It opens at nine. And when does it close? It closes at five.",
+    "audioFile": "audio/listening1.mp3",
+    "question": "图书馆什么时候关闭？",
+    "options": [
+      "九点",
+      "五点",
+      "六点",
+      "七点"
+    ],
+    "answer": 1
+  },
+  {
+    "dialogue": "How much is this book? It's ten pounds. Do you have a discount? Yes, students get twenty percent off.",
+    "audioFile": "audio/listening2.mp3",
+    "question": "这本书学生买多少钱？",
+    "options": [
+      "2 pounds",
+      "8 pounds",
+      "10 pounds",
+      "12 pounds"
+    ],
+    "answer": 1
+  },
+  {
+    "dialogue": "Where should we meet? Let's meet at the station. What time? At three o'clock.",
+    "audioFile": "audio/listening3.mp3",
+    "question": "他们将在哪里见面？",
+    "options": [
+      "公园",
+      "车站",
+      "学校",
+      "餐厅"
+    ],
+    "answer": 1
+  },
+  {
+    "dialogue": "How many books do you need? I need two. What about pens? I need three.",
+    "audioFile": "audio/listening4.mp3",
+    "question": "需要几本书？",
+    "options": [
+      "两本",
+      "三本",
+      "四本",
+      "五本"
+    ],
+    "answer": 0
+  },
+  {
+    "dialogue": "Which shirt do you like? I like the red one. What about the blue one? That's too big.",
+    "audioFile": "audio/listening5.mp3",
+    "question": "说话人喜欢哪种颜色的衬衫？",
+    "options": [
+      "红色",
+      "蓝色",
+      "绿色",
+      "黄色"
+    ],
+    "answer": 0
+  },
+  {
+    "dialogue": "When is your party? It's on Saturday. What time does it start? At seven.",
+    "audioFile": "audio/listening6.mp3",
+    "question": "派对是什么时候？",
+    "options": [
+      "周一",
+      "周六",
+      "周三",
+      "周日"
+    ],
+    "answer": 1
+  },
+  {
+    "dialogue": "Who is coming to the party? Tom and Mary are coming. What about John? No, he can't come.",
+    "audioFile": "audio/listening7.mp3",
+    "question": "谁会来参加派对？",
+    "options": [
+      "Tom",
+      "Mary",
+      "John",
+      "Tom和Mary"
+    ],
+    "answer": 3
+  },
+  {
+    "dialogue": "How do you go to school? I take the bus. How long does it take? About twenty minutes.",
+    "audioFile": "audio/listening8.mp3",
+    "question": "说话人怎么去学校？",
+    "options": [
+      "步行",
+      "坐车",
+      "骑车",
+      "坐公交"
+    ],
+    "answer": 3
+  },
+  {
+    "dialogue": "What's the weather like today? It's sunny. What about tomorrow? It will be cloudy.",
+    "audioFile": "audio/listening9.mp3",
+    "question": "今天天气怎么样？",
+    "options": [
+      "晴朗",
+      "多云",
+      "下雨",
+      "刮风"
+    ],
+    "answer": 0
+  },
+  {
+    "dialogue": "What would you like to eat? I'd like pizza. Would you like hamburger? No, thank you.",
+    "audioFile": "audio/listening10.mp3",
+    "question": "说话人想吃什么？",
+    "options": [
+      "披萨",
+      "汉堡",
+      "三明治",
+      "沙拉"
+    ],
+    "answer": 0
+  },
+  {
+    "dialogue": "What time does the museum close? It closes at six. Is it open on Sunday? Yes, it is.",
+    "audioFile": "audio/listening11.mp3",
+    "question": "博物馆几点关闭？",
+    "options": [
+      "四点",
+      "五点",
+      "六点",
+      "七点"
+    ],
+    "answer": 2
+  },
+  {
+    "dialogue": "How much is that ticket? It's fifteen pounds. Can I get a discount? Yes, with a student card.",
+    "audioFile": "audio/listening12.mp3",
+    "question": "票多少钱？",
+    "options": [
+      "10 pounds",
+      "15 pounds",
+      "20 pounds",
+      "25 pounds"
+    ],
+    "answer": 1
+  },
+  {
+    "dialogue": "What color is your bag? It's black. Do you like blue bags? Yes, I do.",
+    "audioFile": "audio/listening13.mp3",
+    "question": "包是什么颜色的？",
+    "options": [
+      "黑色",
+      "蓝色",
+      "红色",
+      "白色"
+    ],
+    "answer": 0
+  },
+  {
+    "dialogue": "When is the meeting? It's on Friday morning. Where? In the office.",
+    "audioFile": "audio/listening14.mp3",
+    "question": "会议是什么时候？",
+    "options": [
+      "周五上午",
+      "周五下午",
+      "周六上午",
+      "周日"
+    ],
+    "answer": 0
+  },
+  {
+    "dialogue": "How many people are there? There are thirty. Are they all students? Most of them are.",
+    "audioFile": "audio/listening15.mp3",
+    "question": "有多少人？",
+    "options": [
+      "20人",
+      "30人",
+      "40人",
+      "50人"
+    ],
+    "answer": 1
+  },
+  {
+    "dialogue": "What time does the library open? It opens at nine. And when does it close? It closes at five.",
+    "audioFile": "audio/listening16.mp3",
+    "question": "图书馆什么时候关闭？",
+    "options": [
+      "九点",
+      "五点",
+      "六点",
+      "七点"
+    ],
+    "answer": 1
+  },
+  {
+    "dialogue": "How much is this book? It's forty pounds. Do you have a discount? Yes, students get forty percent off.",
+    "audioFile": "audio/listening17.mp3",
+    "question": "这本书学生买多少钱？",
+    "options": [
+      "2 pounds",
+      "8 pounds",
+      "10 pounds",
+      "12 pounds"
+    ],
+    "answer": 1
+  },
+  {
+    "dialogue": "Where should we meet? Let's meet at the station. What time? At seven o'clock.",
+    "audioFile": "audio/listening18.mp3",
+    "question": "他们将在哪里见面？",
+    "options": [
+      "公园",
+      "车站",
+      "学校",
+      "餐厅"
+    ],
+    "answer": 1
+  },
+  {
+    "dialogue": "How many books do you need? I need two. What about pens? I need three.",
+    "audioFile": "audio/listening19.mp3",
+    "question": "需要几本书？",
+    "options": [
+      "两本",
+      "三本",
+      "四本",
+      "五本"
+    ],
+    "answer": 0
+  },
+  {
+    "dialogue": "Which shirt do you like? I like the red one. What about the blue one? That's too big.",
+    "audioFile": "audio/listening20.mp3",
+    "question": "说话人喜欢哪种颜色的衬衫？",
+    "options": [
+      "红色",
+      "蓝色",
+      "绿色",
+      "黄色"
+    ],
+    "answer": 0
+  },
+  {
+    "dialogue": "When is your party? It's on Saturday. What time does it start? At seven.",
+    "audioFile": "audio/listening21.mp3",
+    "question": "派对是什么时候？",
+    "options": [
+      "周一",
+      "周六",
+      "周三",
+      "周日"
+    ],
+    "answer": 1
+  },
+  {
+    "dialogue": "Who is coming to the party? Tom and Mary are coming. What about John? No, he can't come.",
+    "audioFile": "audio/listening22.mp3",
+    "question": "谁会来参加派对？",
+    "options": [
+      "Tom",
+      "Mary",
+      "John",
+      "Tom和Mary"
+    ],
+    "answer": 3
+  },
+  {
+    "dialogue": "How do you go to school? I take the bus. How long does it take? About twenty minutes.",
+    "audioFile": "audio/listening23.mp3",
+    "question": "说话人怎么去学校？",
+    "options": [
+      "步行",
+      "坐车",
+      "骑车",
+      "坐公交"
+    ],
+    "answer": 3
+  },
+  {
+    "dialogue": "What's the weather like today? It's sunny. What about tomorrow? It will be cloudy.",
+    "audioFile": "audio/listening24.mp3",
+    "question": "今天天气怎么样？",
+    "options": [
+      "晴朗",
+      "多云",
+      "下雨",
+      "刮风"
+    ],
+    "answer": 0
+  },
+  {
+    "dialogue": "What would you like to eat? I'd like pizza. Would you like hamburger? No, thank you.",
+    "audioFile": "audio/listening25.mp3",
+    "question": "说话人想吃什么？",
+    "options": [
+      "披萨",
+      "汉堡",
+      "三明治",
+      "沙拉"
+    ],
+    "answer": 0
+  },
+  {
+    "dialogue": "What time does the museum close? It closes at six. Is it open on Sunday? Yes, it is.",
+    "audioFile": "audio/listening26.mp3",
+    "question": "博物馆几点关闭？",
+    "options": [
+      "四点",
+      "五点",
+      "六点",
+      "七点"
+    ],
+    "answer": 2
+  },
+  {
+    "dialogue": "How much is that ticket? It's fifteen pounds. Can I get a discount? Yes, with a student card.",
+    "audioFile": "audio/listening27.mp3",
+    "question": "票多少钱？",
+    "options": [
+      "10 pounds",
+      "15 pounds",
+      "20 pounds",
+      "25 pounds"
+    ],
+    "answer": 1
+  },
+  {
+    "dialogue": "What color is your bag? It's black. Do you like blue bags? Yes, I do.",
+    "audioFile": "audio/listening28.mp3",
+    "question": "包是什么颜色的？",
+    "options": [
+      "黑色",
+      "蓝色",
+      "红色",
+      "白色"
+    ],
+    "answer": 0
+  },
+  {
+    "dialogue": "When is the meeting? It's on Friday morning. Where? In the office.",
+    "audioFile": "audio/listening29.mp3",
+    "question": "会议是什么时候？",
+    "options": [
+      "周五上午",
+      "周五下午",
+      "周六上午",
+      "周日"
+    ],
+    "answer": 0
+  },
+  {
+    "dialogue": "How many people are there? There are thirty. Are they all students? Most of them are.",
+    "audioFile": "audio/listening30.mp3",
+    "question": "有多少人？",
+    "options": [
+      "20人",
+      "30人",
+      "40人",
+      "50人"
+    ],
+    "answer": 1
+  },
+  {
+    "dialogue": "What time does the library open? It opens at nine. And when does it close? It closes at five.",
+    "audioFile": "audio/listening31.mp3",
+    "question": "图书馆什么时候关闭？",
+    "options": [
+      "九点",
+      "五点",
+      "六点",
+      "七点"
+    ],
+    "answer": 1
+  },
+  {
+    "dialogue": "How much is this book? It's forty pounds. Do you have a discount? Yes, students get forty percent off.",
+    "audioFile": "audio/listening32.mp3",
+    "question": "这本书学生买多少钱？",
+    "options": [
+      "2 pounds",
+      "8 pounds",
+      "10 pounds",
+      "12 pounds"
+    ],
+    "answer": 1
+  },
+  {
+    "dialogue": "Where should we meet? Let's meet at the station. What time? At seven o'clock.",
+    "audioFile": "audio/listening33.mp3",
+    "question": "他们将在哪里见面？",
+    "options": [
+      "公园",
+      "车站",
+      "学校",
+      "餐厅"
+    ],
+    "answer": 1
+  },
+  {
+    "dialogue": "How many books do you need? I need two. What about pens? I need three.",
+    "audioFile": "audio/listening34.mp3",
+    "question": "需要几本书？",
+    "options": [
+      "两本",
+      "三本",
+      "四本",
+      "五本"
+    ],
+    "answer": 0
+  },
+  {
+    "dialogue": "Which shirt do you like? I like the red one. What about the blue one? That's too big.",
+    "audioFile": "audio/listening35.mp3",
+    "question": "说话人喜欢哪种颜色的衬衫？",
+    "options": [
+      "红色",
+      "蓝色",
+      "绿色",
+      "黄色"
+    ],
+    "answer": 0
+  },
+  {
+    "dialogue": "When is your party? It's on Saturday. What time does it start? At seven.",
+    "audioFile": "audio/listening36.mp3",
+    "question": "派对是什么时候？",
+    "options": [
+      "周一",
+      "周六",
+      "周三",
+      "周日"
+    ],
+    "answer": 1
+  },
+  {
+    "dialogue": "Who is coming to the party? Tom and Mary are coming. What about John? No, he can't come.",
+    "audioFile": "audio/listening37.mp3",
+    "question": "谁会来参加派对？",
+    "options": [
+      "Tom",
+      "Mary",
+      "John",
+      "Tom和Mary"
+    ],
+    "answer": 3
+  },
+  {
+    "dialogue": "How do you go to school? I take the bus. How long does it take? About forty minutes.",
+    "audioFile": "audio/listening38.mp3",
+    "question": "说话人怎么去学校？",
+    "options": [
+      "步行",
+      "坐车",
+      "骑车",
+      "坐公交"
+    ],
+    "answer": 3
+  },
+  {
+    "dialogue": "What's the weather like today? It's sunny. What about tomorrow? It will be cloudy.",
+    "audioFile": "audio/listening39.mp3",
+    "question": "今天天气怎么样？",
+    "options": [
+      "晴朗",
+      "多云",
+      "下雨",
+      "刮风"
+    ],
+    "answer": 0
+  },
+  {
+    "dialogue": "What would you like to eat? I'd like pizza. Would you like hamburger? No, thank you.",
+    "audioFile": "audio/listening40.mp3",
+    "question": "说话人想吃什么？",
+    "options": [
+      "披萨",
+      "汉堡",
+      "三明治",
+      "沙拉"
+    ],
+    "answer": 0
+  },
+  {
+    "dialogue": "What time does the museum close? It closes at six. Is it open on Sunday? Yes, it is.",
+    "audioFile": "audio/listening41.mp3",
+    "question": "博物馆几点关闭？",
+    "options": [
+      "四点",
+      "五点",
+      "六点",
+      "七点"
+    ],
+    "answer": 2
+  },
+  {
+    "dialogue": "How much is that ticket? It's fifteen pounds. Can I get a discount? Yes, with a student card.",
+    "audioFile": "audio/listening42.mp3",
+    "question": "票多少钱？",
+    "options": [
+      "10 pounds",
+      "15 pounds",
+      "20 pounds",
+      "25 pounds"
+    ],
+    "answer": 1
+  },
+  {
+    "dialogue": "What color is your bag? It's black. Do you like blue bags? Yes, I do.",
+    "audioFile": "audio/listening43.mp3",
+    "question": "包是什么颜色的？",
+    "options": [
+      "黑色",
+      "蓝色",
+      "红色",
+      "白色"
+    ],
+    "answer": 0
+  },
+  {
+    "dialogue": "When is the meeting? It's on Friday morning. Where? In the office.",
+    "audioFile": "audio/listening44.mp3",
+    "question": "会议是什么时候？",
+    "options": [
+      "周五上午",
+      "周五下午",
+      "周六上午",
+      "周日"
+    ],
+    "answer": 0
+  },
+  {
+    "dialogue": "How many people are there? There are thirty. Are they all students? Most of them are.",
+    "audioFile": "audio/listening45.mp3",
+    "question": "有多少人？",
+    "options": [
+      "20人",
+      "30人",
+      "40人",
+      "50人"
+    ],
+    "answer": 1
+  },
+  {
+    "dialogue": "What time does the library open? It opens at nine. And when does it close? It closes at five.",
+    "audioFile": "audio/listening46.mp3",
+    "question": "图书馆什么时候关闭？",
+    "options": [
+      "九点",
+      "五点",
+      "六点",
+      "七点"
+    ],
+    "answer": 1
+  },
+  {
+    "dialogue": "How much is this book? It's ten pounds. Do you have a discount? Yes, students get twenty percent off.",
+    "audioFile": "audio/listening47.mp3",
+    "question": "这本书学生买多少钱？",
+    "options": [
+      "2 pounds",
+      "8 pounds",
+      "10 pounds",
+      "12 pounds"
+    ],
+    "answer": 1
+  },
+  {
+    "dialogue": "Where should we meet? Let's meet at the station. What time? At three o'clock.",
+    "audioFile": "audio/listening48.mp3",
+    "question": "他们将在哪里见面？",
+    "options": [
+      "公园",
+      "车站",
+      "学校",
+      "餐厅"
+    ],
+    "answer": 1
+  },
+  {
+    "dialogue": "How many books do you need? I need two. What about pens? I need three.",
+    "audioFile": "audio/listening49.mp3",
+    "question": "需要几本书？",
+    "options": [
+      "两本",
+      "三本",
+      "四本",
+      "五本"
+    ],
+    "answer": 0
+  },
+  {
+    "dialogue": "Which shirt do you like? I like the red one. What about the blue one? That's too big.",
+    "audioFile": "audio/listening50.mp3",
+    "question": "说话人喜欢哪种颜色的衬衫？",
+    "options": [
+      "红色",
+      "蓝色",
+      "绿色",
+      "黄色"
+    ],
+    "answer": 0
+  },
+  {
+    "dialogue": "When is your party? It's on Saturday. What time does it start? At seven.",
+    "audioFile": "audio/listening51.mp3",
+    "question": "派对是什么时候？",
+    "options": [
+      "周一",
+      "周六",
+      "周三",
+      "周日"
+    ],
+    "answer": 1
+  },
+  {
+    "dialogue": "Who is coming to the party? Tom and Mary are coming. What about John? No, he can't come.",
+    "audioFile": "audio/listening52.mp3",
+    "question": "谁会来参加派对？",
+    "options": [
+      "Tom",
+      "Mary",
+      "John",
+      "Tom和Mary"
+    ],
+    "answer": 3
+  },
+  {
+    "dialogue": "How do you go to school? I take the bus. How long does it take? About forty minutes.",
+    "audioFile": "audio/listening53.mp3",
+    "question": "说话人怎么去学校？",
+    "options": [
+      "步行",
+      "坐车",
+      "骑车",
+      "坐公交"
+    ],
+    "answer": 3
+  },
+  {
+    "dialogue": "What's the weather like today? It's sunny. What about tomorrow? It will be cloudy.",
+    "audioFile": "audio/listening54.mp3",
+    "question": "今天天气怎么样？",
+    "options": [
+      "晴朗",
+      "多云",
+      "下雨",
+      "刮风"
+    ],
+    "answer": 0
+  },
+  {
+    "dialogue": "What would you like to eat? I'd like pizza. Would you like hamburger? No, thank you.",
+    "audioFile": "audio/listening55.mp3",
+    "question": "说话人想吃什么？",
+    "options": [
+      "披萨",
+      "汉堡",
+      "三明治",
+      "沙拉"
+    ],
+    "answer": 0
+  },
+  {
+    "dialogue": "What time does the museum close? It closes at six. Is it open on Sunday? Yes, it is.",
+    "audioFile": "audio/listening56.mp3",
+    "question": "博物馆几点关闭？",
+    "options": [
+      "四点",
+      "五点",
+      "六点",
+      "七点"
+    ],
+    "answer": 2
+  },
+  {
+    "dialogue": "How much is that ticket? It's fifteen pounds. Can I get a discount? Yes, with a student card.",
+    "audioFile": "audio/listening57.mp3",
+    "question": "票多少钱？",
+    "options": [
+      "10 pounds",
+      "15 pounds",
+      "20 pounds",
+      "25 pounds"
+    ],
+    "answer": 1
+  },
+  {
+    "dialogue": "What color is your bag? It's black. Do you like blue bags? Yes, I do.",
+    "audioFile": "audio/listening58.mp3",
+    "question": "包是什么颜色的？",
+    "options": [
+      "黑色",
+      "蓝色",
+      "红色",
+      "白色"
+    ],
+    "answer": 0
+  },
+  {
+    "dialogue": "When is the meeting? It's on Friday morning. Where? In the office.",
+    "audioFile": "audio/listening59.mp3",
+    "question": "会议是什么时候？",
+    "options": [
+      "周五上午",
+      "周五下午",
+      "周六上午",
+      "周日"
+    ],
+    "answer": 0
+  },
+  {
+    "dialogue": "How many people are there? There are thirty. Are they all students? Most of them are.",
+    "audioFile": "audio/listening60.mp3",
+    "question": "有多少人？",
+    "options": [
+      "20人",
+      "30人",
+      "40人",
+      "50人"
+    ],
+    "answer": 1
+  },
+  {
+    "dialogue": "What time does the library open? It opens at nine. And when does it close? It closes at five.",
+    "audioFile": "audio/listening61.mp3",
+    "question": "图书馆什么时候关闭？",
+    "options": [
+      "九点",
+      "五点",
+      "六点",
+      "七点"
+    ],
+    "answer": 1
+  },
+  {
+    "dialogue": "How much is this book? It's ten pounds. Do you have a discount? Yes, students get twenty percent off.",
+    "audioFile": "audio/listening62.mp3",
+    "question": "这本书学生买多少钱？",
+    "options": [
+      "2 pounds",
+      "8 pounds",
+      "10 pounds",
+      "12 pounds"
+    ],
+    "answer": 1
+  },
+  {
+    "dialogue": "Where should we meet? Let's meet at the station. What time? At three o'clock.",
+    "audioFile": "audio/listening63.mp3",
+    "question": "他们将在哪里见面？",
+    "options": [
+      "公园",
+      "车站",
+      "学校",
+      "餐厅"
+    ],
+    "answer": 1
+  },
+  {
+    "dialogue": "How many books do you need? I need two. What about pens? I need three.",
+    "audioFile": "audio/listening64.mp3",
+    "question": "需要几本书？",
+    "options": [
+      "两本",
+      "三本",
+      "四本",
+      "五本"
+    ],
+    "answer": 0
+  },
+  {
+    "dialogue": "Which shirt do you like? I like the red one. What about the blue one? That's too big.",
+    "audioFile": "audio/listening65.mp3",
+    "question": "说话人喜欢哪种颜色的衬衫？",
+    "options": [
+      "红色",
+      "蓝色",
+      "绿色",
+      "黄色"
+    ],
+    "answer": 0
+  },
+  {
+    "dialogue": "When is your party? It's on Saturday. What time does it start? At seven.",
+    "audioFile": "audio/listening66.mp3",
+    "question": "派对是什么时候？",
+    "options": [
+      "周一",
+      "周六",
+      "周三",
+      "周日"
+    ],
+    "answer": 1
+  },
+  {
+    "dialogue": "Who is coming to the party? Tom and Mary are coming. What about John? No, he can't come.",
+    "audioFile": "audio/listening67.mp3",
+    "question": "谁会来参加派对？",
+    "options": [
+      "Tom",
+      "Mary",
+      "John",
+      "Tom和Mary"
+    ],
+    "answer": 3
+  },
+  {
+    "dialogue": "How do you go to school? I take the bus. How long does it take? About twenty minutes.",
+    "audioFile": "audio/listening68.mp3",
+    "question": "说话人怎么去学校？",
+    "options": [
+      "步行",
+      "坐车",
+      "骑车",
+      "坐公交"
+    ],
+    "answer": 3
+  },
+  {
+    "dialogue": "What's the weather like today? It's sunny. What about tomorrow? It will be cloudy.",
+    "audioFile": "audio/listening69.mp3",
+    "question": "今天天气怎么样？",
+    "options": [
+      "晴朗",
+      "多云",
+      "下雨",
+      "刮风"
+    ],
+    "answer": 0
+  },
+  {
+    "dialogue": "What would you like to eat? I'd like pizza. Would you like hamburger? No, thank you.",
+    "audioFile": "audio/listening70.mp3",
+    "question": "说话人想吃什么？",
+    "options": [
+      "披萨",
+      "汉堡",
+      "三明治",
+      "沙拉"
+    ],
+    "answer": 0
+  },
+  {
+    "dialogue": "What time does the museum close? It closes at six. Is it open on Sunday? Yes, it is.",
+    "audioFile": "audio/listening71.mp3",
+    "question": "博物馆几点关闭？",
+    "options": [
+      "四点",
+      "五点",
+      "六点",
+      "七点"
+    ],
+    "answer": 2
+  },
+  {
+    "dialogue": "How much is that ticket? It's fifteen pounds. Can I get a discount? Yes, with a student card.",
+    "audioFile": "audio/listening72.mp3",
+    "question": "票多少钱？",
+    "options": [
+      "10 pounds",
+      "15 pounds",
+      "20 pounds",
+      "25 pounds"
+    ],
+    "answer": 1
+  },
+  {
+    "dialogue": "What color is your bag? It's black. Do you like blue bags? Yes, I do.",
+    "audioFile": "audio/listening73.mp3",
+    "question": "包是什么颜色的？",
+    "options": [
+      "黑色",
+      "蓝色",
+      "红色",
+      "白色"
+    ],
+    "answer": 0
+  },
+  {
+    "dialogue": "When is the meeting? It's on Friday morning. Where? In the office.",
+    "audioFile": "audio/listening74.mp3",
+    "question": "会议是什么时候？",
+    "options": [
+      "周五上午",
+      "周五下午",
+      "周六上午",
+      "周日"
+    ],
+    "answer": 0
+  },
+  {
+    "dialogue": "How many people are there? There are thirty. Are they all students? Most of them are.",
+    "audioFile": "audio/listening75.mp3",
+    "question": "有多少人？",
+    "options": [
+      "20人",
+      "30人",
+      "40人",
+      "50人"
+    ],
+    "answer": 1
+  },
+  {
+    "dialogue": "What time does the library open? It opens at nine. And when does it close? It closes at five.",
+    "audioFile": "audio/listening76.mp3",
+    "question": "图书馆什么时候关闭？",
+    "options": [
+      "九点",
+      "五点",
+      "六点",
+      "七点"
+    ],
+    "answer": 1
+  },
+  {
+    "dialogue": "How much is this book? It's forty pounds. Do you have a discount? Yes, students get forty percent off.",
+    "audioFile": "audio/listening77.mp3",
+    "question": "这本书学生买多少钱？",
+    "options": [
+      "2 pounds",
+      "8 pounds",
+      "10 pounds",
+      "12 pounds"
+    ],
+    "answer": 1
+  },
+  {
+    "dialogue": "Where should we meet? Let's meet at the station. What time? At seven o'clock.",
+    "audioFile": "audio/listening78.mp3",
+    "question": "他们将在哪里见面？",
+    "options": [
+      "公园",
+      "车站",
+      "学校",
+      "餐厅"
+    ],
+    "answer": 1
+  },
+  {
+    "dialogue": "How many books do you need? I need two. What about pens? I need three.",
+    "audioFile": "audio/listening79.mp3",
+    "question": "需要几本书？",
+    "options": [
+      "两本",
+      "三本",
+      "四本",
+      "五本"
+    ],
+    "answer": 0
+  },
+  {
+    "dialogue": "Which shirt do you like? I like the red one. What about the blue one? That's too big.",
+    "audioFile": "audio/listening80.mp3",
+    "question": "说话人喜欢哪种颜色的衬衫？",
+    "options": [
+      "红色",
+      "蓝色",
+      "绿色",
+      "黄色"
+    ],
+    "answer": 0
+  },
+  {
+    "dialogue": "When is your party? It's on Saturday. What time does it start? At seven.",
+    "audioFile": "audio/listening81.mp3",
+    "question": "派对是什么时候？",
+    "options": [
+      "周一",
+      "周六",
+      "周三",
+      "周日"
+    ],
+    "answer": 1
+  },
+  {
+    "dialogue": "Who is coming to the party? Tom and Mary are coming. What about John? No, he can't come.",
+    "audioFile": "audio/listening82.mp3",
+    "question": "谁会来参加派对？",
+    "options": [
+      "Tom",
+      "Mary",
+      "John",
+      "Tom和Mary"
+    ],
+    "answer": 3
+  },
+  {
+    "dialogue": "How do you go to school? I take the bus. How long does it take? About twenty minutes.",
+    "audioFile": "audio/listening83.mp3",
+    "question": "说话人怎么去学校？",
+    "options": [
+      "步行",
+      "坐车",
+      "骑车",
+      "坐公交"
+    ],
+    "answer": 3
+  },
+  {
+    "dialogue": "What's the weather like today? It's sunny. What about tomorrow? It will be cloudy.",
+    "audioFile": "audio/listening84.mp3",
+    "question": "今天天气怎么样？",
+    "options": [
+      "晴朗",
+      "多云",
+      "下雨",
+      "刮风"
+    ],
+    "answer": 0
+  },
+  {
+    "dialogue": "What would you like to eat? I'd like pizza. Would you like hamburger? No, thank you.",
+    "audioFile": "audio/listening85.mp3",
+    "question": "说话人想吃什么？",
+    "options": [
+      "披萨",
+      "汉堡",
+      "三明治",
+      "沙拉"
+    ],
+    "answer": 0
+  },
+  {
+    "dialogue": "What time does the museum close? It closes at six. Is it open on Sunday? Yes, it is.",
+    "audioFile": "audio/listening86.mp3",
+    "question": "博物馆几点关闭？",
+    "options": [
+      "四点",
+      "五点",
+      "六点",
+      "七点"
+    ],
+    "answer": 2
+  },
+  {
+    "dialogue": "How much is that ticket? It's fifteen pounds. Can I get a discount? Yes, with a student card.",
+    "audioFile": "audio/listening87.mp3",
+    "question": "票多少钱？",
+    "options": [
+      "10 pounds",
+      "15 pounds",
+      "20 pounds",
+      "25 pounds"
+    ],
+    "answer": 1
+  },
+  {
+    "dialogue": "What color is your bag? It's black. Do you like blue bags? Yes, I do.",
+    "audioFile": "audio/listening88.mp3",
+    "question": "包是什么颜色的？",
+    "options": [
+      "黑色",
+      "蓝色",
+      "红色",
+      "白色"
+    ],
+    "answer": 0
+  },
+  {
+    "dialogue": "When is the meeting? It's on Friday morning. Where? In the office.",
+    "audioFile": "audio/listening89.mp3",
+    "question": "会议是什么时候？",
+    "options": [
+      "周五上午",
+      "周五下午",
+      "周六上午",
+      "周日"
+    ],
+    "answer": 0
+  },
+  {
+    "dialogue": "How many people are there? There are thirty. Are they all students? Most of them are.",
+    "audioFile": "audio/listening90.mp3",
+    "question": "有多少人？",
+    "options": [
+      "20人",
+      "30人",
+      "40人",
+      "50人"
+    ],
+    "answer": 1
+  },
+  {
+    "dialogue": "What time does the library open? It opens at nine. And when does it close? It closes at five.",
+    "audioFile": "audio/listening91.mp3",
+    "question": "图书馆什么时候关闭？",
+    "options": [
+      "九点",
+      "五点",
+      "六点",
+      "七点"
+    ],
+    "answer": 1
+  },
+  {
+    "dialogue": "How much is this book? It's forty pounds. Do you have a discount? Yes, students get forty percent off.",
+    "audioFile": "audio/listening92.mp3",
+    "question": "这本书学生买多少钱？",
+    "options": [
+      "2 pounds",
+      "8 pounds",
+      "10 pounds",
+      "12 pounds"
+    ],
+    "answer": 1
+  },
+  {
+    "dialogue": "Where should we meet? Let's meet at the station. What time? At seven o'clock.",
+    "audioFile": "audio/listening93.mp3",
+    "question": "他们将在哪里见面？",
+    "options": [
+      "公园",
+      "车站",
+      "学校",
+      "餐厅"
+    ],
+    "answer": 1
+  },
+  {
+    "dialogue": "How many books do you need? I need two. What about pens? I need three.",
+    "audioFile": "audio/listening94.mp3",
+    "question": "需要几本书？",
+    "options": [
+      "两本",
+      "三本",
+      "四本",
+      "五本"
+    ],
+    "answer": 0
+  },
+  {
+    "dialogue": "Which shirt do you like? I like the red one. What about the blue one? That's too big.",
+    "audioFile": "audio/listening95.mp3",
+    "question": "说话人喜欢哪种颜色的衬衫？",
+    "options": [
+      "红色",
+      "蓝色",
+      "绿色",
+      "黄色"
+    ],
+    "answer": 0
+  },
+  {
+    "dialogue": "When is your party? It's on Saturday. What time does it start? At seven.",
+    "audioFile": "audio/listening96.mp3",
+    "question": "派对是什么时候？",
+    "options": [
+      "周一",
+      "周六",
+      "周三",
+      "周日"
+    ],
+    "answer": 1
+  },
+  {
+    "dialogue": "Who is coming to the party? Tom and Mary are coming. What about John? No, he can't come.",
+    "audioFile": "audio/listening97.mp3",
+    "question": "谁会来参加派对？",
+    "options": [
+      "Tom",
+      "Mary",
+      "John",
+      "Tom和Mary"
+    ],
+    "answer": 3
+  },
+  {
+    "dialogue": "How do you go to school? I take the bus. How long does it take? About forty minutes.",
+    "audioFile": "audio/listening98.mp3",
+    "question": "说话人怎么去学校？",
+    "options": [
+      "步行",
+      "坐车",
+      "骑车",
+      "坐公交"
+    ],
+    "answer": 3
+  },
+  {
+    "dialogue": "What's the weather like today? It's sunny. What about tomorrow? It will be cloudy.",
+    "audioFile": "audio/listening99.mp3",
+    "question": "今天天气怎么样？",
+    "options": [
+      "晴朗",
+      "多云",
+      "下雨",
+      "刮风"
+    ],
+    "answer": 0
+  },
+  {
+    "dialogue": "What would you like to eat? I'd like pizza. Would you like hamburger? No, thank you.",
+    "audioFile": "audio/listening100.mp3",
+    "question": "说话人想吃什么？",
+    "options": [
+      "披萨",
+      "汉堡",
+      "三明治",
+      "沙拉"
+    ],
+    "answer": 0
+  }
+]

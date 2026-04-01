@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>API测试</title>
+  <style>
+    body { font-family: Arial; padding: 20px; max-width: 800px; margin: 0 auto; }
+    .test { margin: 20px 0; padding: 15px; background: #f5f5f5; border-radius: 8px; }
+    button { padding: 10px 20px; cursor: pointer; margin: 5px; }
+    .result { margin-top: 10px; padding: 10px; background: white; border-radius: 4px; }
+    .success { color: green; }
+    .error { color: red; }
+  </style>
+</head>
+<body>
+  <h1>🔧 API连接测试</h1>
+  
+  <div class="test">
+    <h3>测试1：注册</h3>
+    <input type="text" id="username" placeholder="用户名" value="测试用户">
+    <input type="email" id="email" placeholder="邮箱" value="test@app.com">
+    <input type="password" id="password" placeholder="密码" value="123456">
+    <button onclick="testRegister()">测试注册</button>
+    <div id="regResult" class="result"></div>
+  </div>
+
+  <div class="test">
+    <h3>测试2：登录</h3>
+    <button onclick="testLogin()">测试登录</button>
+    <div id="loginResult" class="result"></div>
+  </div>
+
+  <script>
+    const API_BASE = 'http://127.0.0.1:3001';
+
+    async function testRegister() {
+      const username = document.getElementById('username').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      const resDiv = document.getElementById('regResult');
+      resDiv.innerHTML = '请求中...';
+
+      try {
+        const res = await fetch(`${API_BASE}/api/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, email, password, avatarEmoji: '😊' })
+        });
+
+        const data = await res.json();
+        
+        if (data.success) {
+          resDiv.innerHTML = `<span class="success">✓ 注册成功！</span><br><pre>${JSON.stringify(data, null, 2)}</pre>`;
+        } else {
+          resDiv.innerHTML = `<span class="error">✗ 注册失败</span><br><pre>${JSON.stringify(data, null, 2)}</pre>`;
+        }
+      } catch (err) {
+        resDiv.innerHTML = `<span class="error">✗ 网络错误: ${err.message}</span>`;
+      }
+    }
+
+    async function testLogin() {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      const resDiv = document.getElementById('loginResult');
+      resDiv.innerHTML = '请求中...';
+
+      try {
+        const res = await fetch(`${API_BASE}/api/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await res.json();
+        
+        if (data.success) {
+          resDiv.innerHTML = `<span class="success">✓ 登录成功！</span><br><pre>${JSON.stringify(data, null, 2)}</pre>`;
+          localStorage.setItem('ketUser', JSON.stringify(data.user));
+        } else {
+          resDiv.innerHTML = `<span class="error">✗ 登录失败</span><br><pre>${JSON.stringify(data, null, 2)}</pre>`;
+        }
+      } catch (err) {
+        resDiv.innerHTML = `<span class="error">✗ 网络错误: ${err.message}</span>`;
+      }
+    }
+  </script>
+</body>
+</html>

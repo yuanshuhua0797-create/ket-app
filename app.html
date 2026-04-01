@@ -1,0 +1,1489 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KET备考APP</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', 'PingFang SC', system-ui, sans-serif; background: #F0F4FF; min-height: 100vh; }
+
+    :root {
+      --primary: #6C63FF;
+      --secondary: #FF6584;
+      --accent: #43E97B;
+      --accent2: #F7971E;
+      --text: #2D3748;
+      --text-light: #718096;
+      --card: #FFFFFF;
+      --radius: 16px;
+    }
+
+    .top-nav {
+      background: linear-gradient(135deg, var(--primary) 0%, #9B59B6 100%);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-title { color: white; font-size: 18px; font-weight: 700; }
+    .nav-user-info { display: flex; align-items: center; gap: 10px; }
+    .user-avatar { font-size: 24px; }
+    .user-stats { color: white; text-align: right; font-size: 13px; }
+    .streak-badge { background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 12px; font-weight: 600; }
+    .logout-btn { color: white; background: rgba(255,255,255,0.15); border: none; padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; }
+
+    .app-container { max-width: 480px; margin: 0 auto; padding: 0 0 80px; }
+
+    .page { display: none; }
+    .page.active { display: block; }
+
+    .hero {
+      background: linear-gradient(135deg, var(--primary) 0%, #9B59B6 100%);
+      padding: 24px 20px 40px;
+      color: white;
+      position: relative;
+    }
+    .hero-greeting { font-size: 14px; opacity: 0.85; margin-bottom: 4px; }
+    .hero-name { font-size: 26px; font-weight: 800; margin-bottom: 16px; }
+    .hero-progress-wrap { background: rgba(255,255,255,0.15); border-radius: 12px; padding: 14px 16px; }
+    .hero-progress-label { font-size: 12px; opacity: 0.85; margin-bottom: 8px; display: flex; justify-content: space-between; }
+    .progress-bar { height: 10px; background: rgba(255,255,255,0.25); border-radius: 5px; overflow: hidden; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, #43E97B, #38F9D7); border-radius: 5px; transition: width 0.6s ease; }
+
+    .home-content { padding: 40px 16px 16px; }
+
+    .section-title { font-size: 16px; font-weight: 700; margin-bottom: 12px; color: var(--text); }
+
+    .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 24px; }
+    .stat-card { background: var(--card); border-radius: var(--radius); padding: 14px 10px; text-align: center; box-shadow: 0 4px 20px rgba(108,99,255,0.12); }
+    .stat-icon { font-size: 24px; margin-bottom: 4px; }
+    .stat-value { font-size: 20px; font-weight: 800; color: var(--primary); }
+    .stat-label { font-size: 11px; color: var(--text-light); margin-top: 2px; }
+
+    .module-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 24px; }
+    .module-card { background: var(--card); border-radius: var(--radius); padding: 18px 14px; box-shadow: 0 4px 20px rgba(108,99,255,0.12); cursor: pointer; transition: transform 0.2s; text-align: center; }
+    .module-card:hover { transform: translateY(-4px); }
+    .module-icon { font-size: 36px; margin-bottom: 8px; }
+    .module-name { font-size: 14px; font-weight: 700; color: var(--text); }
+    .module-desc { font-size: 11px; color: var(--text-light); margin-top: 4px; }
+
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: white;
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 0 12px;
+      box-shadow: 0 -2px 20px rgba(0,0,0,0.08);
+      z-index: 100;
+    }
+    .nav-item { display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer; padding: 4px 16px; }
+    .nav-icon { font-size: 22px; opacity: 0.6; }
+    .nav-label { font-size: 11px; color: var(--text-light); }
+    .nav-item.active .nav-icon { opacity: 1; }
+    .nav-item.active .nav-label { color: var(--primary); font-weight: 700; }
+
+    .toast {
+      position: fixed; bottom: 90px; left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: rgba(44,44,60,0.92);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 24px;
+      font-size: 14px;
+      opacity: 0;
+      transition: all 0.3s;
+      z-index: 999;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* Module Pages */
+    .module-header {
+      background: linear-gradient(135deg, var(--primary) 0%, #9B59B6 100%);
+      padding: 20px;
+      color: white;
+    }
+    .module-title { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+    .module-back { color: white; text-decoration: none; font-size: 14px; cursor: pointer; opacity: 0.9; }
+    .module-content { padding: 20px 16px; }
+
+    /* Pagination */
+    .pagination {
+      display: flex; justify-content: center; gap: 10px; margin: 20px 0;
+    }
+    .page-btn {
+      padding: 8px 16px; border: 1px solid #E2E8F0; border-radius: 8px;
+      background: white; cursor: pointer; font-size: 13px; transition: all 0.2s;
+    }
+    .page-btn:hover { border-color: var(--primary); }
+    .page-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .page-info { 
+      padding: 8px 16px; background: var(--primary); color: white;
+      border-radius: 8px; font-size: 13px; font-weight: 600;
+    }
+
+    /* Vocab Module */
+    .vocab-filter {
+      display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 16px;
+      scrollbar-width: none;
+    }
+    .vocab-filter::-webkit-scrollbar { display: none; }
+    .filter-chip {
+      padding: 8px 16px; background: #E2E8F0; border-radius: 20px; font-size: 13px; cursor: pointer;
+      white-space: nowrap; transition: all 0.2s;
+    }
+    .filter-chip.active { background: var(--primary); color: white; }
+    .flashcard {
+      background: white; border-radius: 20px; padding: 30px 24px; text-align: center;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.1); margin-bottom: 20px; cursor: pointer;
+      perspective: 1000px; height: 240px; display: flex; flex-direction: column; justify-content: center;
+    }
+    .word { font-size: 32px; font-weight: 800; color: var(--text); margin-bottom: 8px; }
+    .phonetic { font-size: 16px; color: var(--text-light); margin-bottom: 12px; }
+    .example { font-size: 14px; color: var(--text-light); line-height: 1.5; }
+    .translation { font-size: 28px; font-weight: 700; color: var(--primary); margin-top: 16px; }
+    .rating-btns { display: flex; gap: 10px; justify-content: center; margin-top: 20px; }
+    .rating-btn {
+      padding: 12px 24px; border: none; border-radius: 12px; cursor: pointer; font-weight: 600;
+      transition: transform 0.2s;
+    }
+    .rating-btn:active { transform: scale(0.95); }
+    .rating-hard { background: #FED7D7; color: #C53030; }
+    .rating-medium { background: #FEEBC8; color: #C05621; }
+    .rating-easy { background: #C6F6D5; color: #276749; }
+
+    /* Reading Module */
+    .reading-section { background: white; border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .section-title { font-size: 16px; font-weight: 700; }
+    .reading-text { font-size: 14px; line-height: 1.8; color: var(--text); margin-bottom: 16px; }
+    .reading-option {
+      padding: 12px 16px; border: 2px solid #E2E8F0; border-radius: 12px; margin-bottom: 10px;
+      cursor: pointer; transition: all 0.2s; font-size: 14px;
+    }
+    .reading-option:hover { border-color: var(--primary); background: #F7FAFC; }
+    .reading-option.selected { border-color: var(--primary); background: #EDF2F7; }
+    .reading-option.correct { border-color: #43E97B; background: #C6F6D5; }
+    .reading-option.wrong { border-color: #F56565; background: #FED7D7; }
+
+    /* Listening Module */
+    .audio-player {
+      background: white; border-radius: 20px; padding: 24px; text-align: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin-bottom: 20px;
+    }
+    .play-btn {
+      width: 70px; height: 70px; border-radius: 50%; background: var(--primary); border: none;
+      cursor: pointer; font-size: 24px; color: white; transition: transform 0.2s;
+    }
+    .play-btn:active { transform: scale(0.95); }
+    .audio-script {
+      background: white; border-radius: var(--radius); padding: 16px; margin-top: 16px;
+      font-size: 14px; line-height: 1.8; color: var(--text-light); display: none;
+    }
+    .audio-script.show { display: block; }
+    .toggle-script-btn {
+      width: 100%; padding: 10px; border: 1px solid #E2E8F0; border-radius: 10px;
+      background: #F7FAFC; cursor: pointer; font-size: 13px; margin-top: 12px;
+    }
+
+    /* Writing Module */
+    .writing-prompt { background: white; border-radius: var(--radius); padding: 16px; margin-bottom: 16px; }
+    .writing-area {
+      width: 100%; min-height: 200px; padding: 16px; border: 2px solid #E2E8F0;
+      border-radius: 12px; font-size: 14px; line-height: 1.8; resize: vertical;
+    }
+    .writing-area:focus { outline: none; border-color: var(--primary); }
+    .word-count { text-align: right; font-size: 12px; color: var(--text-light); margin-top: 8px; }
+    .reference-answer {
+      background: #F7FAFC; border-radius: var(--radius); padding: 16px; margin-top: 20px;
+      border-left: 4px solid var(--primary);
+    }
+    .reference-title { font-size: 14px; font-weight: 700; margin-bottom: 8px; color: var(--primary); }
+
+    /* Progress Page */
+    .progress-section { background: white; border-radius: var(--radius); padding: 20px; margin-bottom: 16px; }
+    .skill-progress { display: flex; align-items: center; margin-bottom: 16px; }
+    .skill-icon { font-size: 24px; width: 40px; }
+    .skill-info { flex: 1; margin-left: 12px; }
+    .skill-name { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+    .skill-bar { height: 8px; background: #EDF2F7; border-radius: 4px; overflow: hidden; }
+    .skill-fill { height: 100%; background: linear-gradient(90deg, var(--primary), #9B59B6); border-radius: 4px; }
+    .skill-percent { font-size: 14px; font-weight: 700; color: var(--primary); }
+
+    .activity-item {
+      display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #EDF2F7;
+    }
+    .activity-item:last-child { border-bottom: none; }
+    .activity-icon { font-size: 20px; width: 36px; }
+    .activity-info { flex: 1; margin-left: 10px; }
+    .activity-text { font-size: 13px; color: var(--text); }
+    .activity-time { font-size: 11px; color: var(--text-light); }
+    .activity-xp { font-size: 13px; font-weight: 700; color: var(--accent); }
+  </style>
+</head>
+<body>
+  <div class="top-nav">
+    <div class="nav-title">KET 备考</div>
+    <div class="nav-user-info">
+      <span class="user-stats">
+        <span id="streakDisplay">🔥 0天</span>
+      </span>
+      <span class="user-avatar" id="navAvatar">😊</span>
+      <button class="logout-btn" onclick="logout()">退出</button>
+    </div>
+  </div>
+
+  <div class="app-container">
+    <!-- 首页 -->
+    <div id="homePage" class="page active">
+      <div class="hero">
+        <div class="hero-greeting" id="greeting">早上好</div>
+        <div class="hero-name" id="userName">用户</div>
+        <div class="hero-progress-wrap">
+          <div class="hero-progress-label">
+            <span>KET 备考进度</span>
+            <span id="overallProgress">0%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="home-content">
+        <div class="section-title">今日学习</div>
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-icon">📖</div>
+            <div class="stat-value" id="todayWords">0</div>
+            <div class="stat-label">单词</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">⭐</div>
+            <div class="stat-value" id="todayXP">0</div>
+            <div class="stat-label">经验值</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">✅</div>
+            <div class="stat-value" id="todayAccuracy">0%</div>
+            <div class="stat-label">正确率</div>
+          </div>
+        </div>
+
+        <div class="section-title">学习模块</div>
+        <div class="module-grid">
+          <div class="module-card" onclick="showModule('vocab')">
+            <div class="module-icon">🔤</div>
+            <div class="module-name">词汇</div>
+            <div class="module-desc">KET 核心词汇</div>
+          </div>
+          <div class="module-card" onclick="showModule('reading')">
+            <div class="module-icon">📖</div>
+            <div class="module-name">阅读</div>
+            <div class="module-desc">理解与练习</div>
+          </div>
+          <div class="module-card" onclick="showModule('listening')">
+            <div class="module-icon">🎧</div>
+            <div class="module-name">听力</div>
+            <div class="module-desc">100套练习</div>
+          </div>
+          <div class="module-card" onclick="showModule('writing')">
+            <div class="module-icon">✍️</div>
+            <div class="module-name">写作</div>
+            <div class="module-desc">邮件与短文</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 词汇页面 -->
+    <div id="vocabPage" class="page">
+      <div class="module-header">
+        <div class="module-back" onclick="goHome()">← 返回首页</div>
+        <div class="module-title">词汇学习</div>
+      </div>
+      <div class="module-content">
+        <div class="vocab-filter" id="vocabFilter"></div>
+        <div class="flashcard" id="flashcard" onclick="flipCard()">
+          <div class="word" id="vocabWord">Loading...</div>
+          <div class="phonetic" id="vocabPhonetic"></div>
+          <div class="example" id="vocabExample"></div>
+          <div class="translation" id="vocabTranslation" style="display: none;"></div>
+        </div>
+        <div class="rating-btns">
+          <button class="rating-btn rating-hard" onclick="rateWord('hard')">😓 难</button>
+          <button class="rating-btn rating-medium" onclick="rateWord('medium')">😐 一般</button>
+          <button class="rating-btn rating-easy" onclick="rateWord('easy')">😄 会了！</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 阅读页面 -->
+    <div id="readingPage" class="page">
+      <div class="module-header">
+        <div class="module-back" onclick="goHome()">← 返回首页</div>
+        <div class="module-title">阅读练习</div>
+      </div>
+      <div class="module-content" id="readingContent"></div>
+    </div>
+
+    <!-- 听力页面 -->
+    <div id="listeningPage" class="page">
+      <div class="module-header">
+        <div class="module-back" onclick="goHome()">← 返回首页</div>
+        <div class="module-title">听力练习</div>
+      </div>
+      <div class="module-content" id="listeningContent">
+        <div style="text-align: center; padding: 40px; color: var(--text-light);">
+          正在加载听力数据...
+        </div>
+      </div>
+    </div>
+
+    <!-- 写作页面 -->
+    <div id="writingPage" class="page">
+      <div class="module-header">
+        <div class="module-back" onclick="goHome()">← 返回首页</div>
+        <div class="module-title">写作练习</div>
+      </div>
+      <div class="module-content" id="writingContent"></div>
+    </div>
+
+    <!-- 进度页面 -->
+    <div id="progressPage" class="page">
+      <div class="hero">
+        <div class="hero-name">学习进度</div>
+      </div>
+      <div class="home-content">
+        <div class="section-title">技能掌握</div>
+        <div class="progress-section">
+          <div class="skill-progress">
+            <div class="skill-icon">🔤</div>
+            <div class="skill-info">
+              <div class="skill-name">词汇</div>
+              <div class="skill-bar">
+                <div class="skill-fill" id="vocabSkillBar" style="width: 0%"></div>
+              </div>
+            </div>
+            <div class="skill-percent" id="vocabSkillPercent">0%</div>
+          </div>
+          <div class="skill-progress">
+            <div class="skill-icon">📖</div>
+            <div class="skill-info">
+              <div class="skill-name">阅读</div>
+              <div class="skill-bar">
+                <div class="skill-fill" id="readingSkillBar" style="width: 0%"></div>
+              </div>
+            </div>
+            <div class="skill-percent" id="readingSkillPercent">0%</div>
+          </div>
+          <div class="skill-progress">
+            <div class="skill-icon">🎧</div>
+            <div class="skill-info">
+              <div class="skill-name">听力</div>
+              <div class="skill-bar">
+                <div class="skill-fill" id="listeningSkillBar" style="width: 0%"></div>
+              </div>
+            </div>
+            <div class="skill-percent" id="listeningSkillPercent">0%</div>
+          </div>
+          <div class="skill-progress">
+            <div class="skill-icon">✍️</div>
+            <div class="skill-info">
+              <div class="skill-name">写作</div>
+              <div class="skill-bar">
+                <div class="skill-fill" id="writingSkillBar" style="width: 0%"></div>
+              </div>
+            </div>
+            <div class="skill-percent" id="writingSkillPercent">0%</div>
+          </div>
+        </div>
+
+        <div class="section-title">最近活动</div>
+        <div class="progress-section" id="recentActivities">
+          <div style="text-align: center; color: var(--text-light); padding: 20px;">
+            暂无活动记录
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <div class="nav-item active" onclick="switchPage('home')">
+      <span class="nav-icon">🏠</span>
+      <span class="nav-label">首页</span>
+    </div>
+    <div class="nav-item" onclick="switchPage('progress')">
+      <span class="nav-icon">📊</span>
+      <span class="nav-label">进度</span>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const API_BASE = 'http://127.0.0.1:3001';
+    let currentUser = null;
+    let currentVocabIndex = 0;
+    let isFlipped = false;
+    let currentFilter = 'all';
+    let currentListeningPage = 0;
+    const LISTENING_PER_PAGE = 3;
+    let listeningData = [];
+    let currentReadingPage = 0;
+    const READING_PER_PAGE = 3;
+    let currentWritingPage = 0;
+    const WRITING_PER_PAGE = 3;
+
+    // KET词汇数据
+    const vocabData = [
+      // 日常生活 (40个)
+      { word: 'morning', phonetic: '/ˈmɔːnɪŋ/', example: 'I have breakfast every morning.', translation: '早晨', category: '日常' },
+      { word: 'evening', phonetic: '/ˈiːvnɪŋ/', example: 'We watch TV in the evening.', translation: '傍晚', category: '日常' },
+      { word: 'night', phonetic: '/naɪt/', example: 'Good night! Sleep well.', translation: '夜晚', category: '日常' },
+      { word: 'friend', phonetic: '/frend/', example: 'She is my best friend.', translation: '朋友', category: '日常' },
+      { word: 'family', phonetic: '/ˈfæmɪli/', example: 'I love my family very much.', translation: '家庭', category: '日常' },
+      { word: 'house', phonetic: '/haʊs/', example: 'This is my house.', translation: '房子', category: '日常' },
+      { word: 'home', phonetic: '/həʊm/', example: 'I am going home now.', translation: '家', category: '日常' },
+      { word: 'music', phonetic: '/ˈmjuːzɪk/', example: 'I like listening to music.', translation: '音乐', category: '日常' },
+      { word: 'sport', phonetic: '/spɔːt/', example: 'Football is my favorite sport.', translation: '运动', category: '日常' },
+      { word: 'game', phonetic: '/ɡeɪm/', example: 'Let\'s play a game together.', translation: '游戏', category: '日常' },
+      { word: 'film', phonetic: '/fɪlm/', example: 'We watched a great film last night.', translation: '电影', category: '日常' },
+      { word: 'phone', phonetic: '/fəʊn/', example: 'Can I use your phone?', translation: '电话/手机', category: '日常' },
+      { word: 'money', phonetic: '/ˈmʌni/', example: 'I don\'t have enough money.', translation: '钱', category: '日常' },
+      { word: 'time', phonetic: '/taɪm/', example: 'What time is it?', translation: '时间', category: '日常' },
+      { word: 'day', phonetic: '/deɪ/', example: 'Have a nice day!', translation: '天/白天', category: '日常' },
+      { word: 'week', phonetic: '/wiːk/', example: 'I go swimming once a week.', translation: '星期', category: '日常' },
+      { word: 'birthday', phonetic: '/ˈbɜːθdeɪ/', example: 'Happy birthday to you!', translation: '生日', category: '日常' },
+      { word: 'party', phonetic: '/ˈpɑːti/', example: 'She had a party last weekend.', translation: '派对', category: '日常' },
+      { word: 'present', phonetic: '/ˈpreznt/', example: 'I gave her a birthday present.', translation: '礼物', category: '日常' },
+      { word: 'letter', phonetic: '/ˈletə(r)/', example: 'I wrote a letter to my friend.', translation: '信', category: '日常' },
+      { word: 'message', phonetic: '/ˈmesɪdʒ/', example: 'Did you get my message?', translation: '消息', category: '日常' },
+      { word: 'colour', phonetic: '/ˈkʌlə(r)/', example: 'What\'s your favourite colour?', translation: '颜色', category: '日常' },
+      { word: 'weather', phonetic: '/ˈweðə(r)/', example: 'The weather is nice today.', translation: '天气', category: '日常' },
+      { word: 'problem', phonetic: '/ˈprɒbləm/', example: 'No problem! I can help.', translation: '问题/麻烦', category: '日常' },
+      { word: 'idea', phonetic: '/aɪˈdɪə/', example: 'That\'s a good idea!', translation: '主意/想法', category: '日常' },
+      { word: 'hobby', phonetic: '/ˈhɒbi/', example: 'My hobby is drawing.', translation: '爱好', category: '日常' },
+      { word: 'favourite', phonetic: '/ˈfeɪvərɪt/', example: 'Pizza is my favourite food.', translation: '最喜爱的', category: '日常' },
+      { word: 'busy', phonetic: '/ˈbɪzi/', example: 'I am very busy today.', translation: '忙碌的', category: '日常' },
+      { word: 'happy', phonetic: '/ˈhæpi/', example: 'I am so happy today!', translation: '快乐的', category: '日常' },
+      { word: 'tired', phonetic: '/ˈtaɪəd/', example: 'I feel very tired after work.', translation: '疲惫的', category: '日常' },
+      { word: 'ready', phonetic: '/ˈredi/', example: 'Are you ready to go?', translation: '准备好的', category: '日常' },
+      { word: 'sure', phonetic: '/ʃʊə(r)/', example: 'Are you sure about that?', translation: '确定的', category: '日常' },
+      { word: 'terrible', phonetic: '/ˈterəbl/', example: 'The weather is terrible today.', translation: '糟糕的', category: '日常' },
+      { word: 'wonderful', phonetic: '/ˈwʌndəfl/', example: 'That\'s a wonderful idea!', translation: '极好的', category: '日常' },
+      { word: 'difficult', phonetic: '/ˈdɪfɪklt/', example: 'This is a difficult question.', translation: '困难的', category: '日常' },
+      { word: 'easy', phonetic: '/ˈiːzi/', example: 'This exercise is easy.', translation: '容易的', category: '日常' },
+      { word: 'often', phonetic: '/ˈɒfn/', example: 'I often go jogging in the morning.', translation: '经常', category: '日常' },
+      { word: 'always', phonetic: '/ˈɔːlweɪz/', example: 'She always comes on time.', translation: '总是', category: '日常' },
+      { word: 'never', phonetic: '/ˈnevə(r)/', example: 'I never eat fast food.', translation: '从不', category: '日常' },
+      { word: 'sometimes', phonetic: '/ˈsʌmtaɪmz/', example: 'I sometimes walk to school.', translation: '有时', category: '日常' },
+      // 学校 (25个)
+      { word: 'school', phonetic: '/skuːl/', example: 'I go to school every day.', translation: '学校', category: '学校' },
+      { word: 'teacher', phonetic: '/ˈtiːtʃə(r)/', example: 'Our teacher is very nice.', translation: '老师', category: '学校' },
+      { word: 'student', phonetic: '/ˈstjuːdnt/', example: 'I am a student.', translation: '学生', category: '学校' },
+      { word: 'class', phonetic: '/klɑːs/', example: 'The class starts at 8 a.m.', translation: '班级/课堂', category: '学校' },
+      { word: 'lesson', phonetic: '/ˈlesn/', example: 'We have a maths lesson today.', translation: '课', category: '学校' },
+      { word: 'homework', phonetic: '/ˈhəʊmwɜːk/', example: 'Did you do your homework?', translation: '家庭作业', category: '学校' },
+      { word: 'exam', phonetic: '/ɪɡˈzæm/', example: 'I have an exam tomorrow.', translation: '考试', category: '学校' },
+      { word: 'test', phonetic: '/test/', example: 'We had a spelling test.', translation: '测验', category: '学校' },
+      { word: 'book', phonetic: '/bʊk/', example: 'I am reading a book.', translation: '书', category: '学校' },
+      { word: 'notebook', phonetic: '/ˈnəʊtbʊk/', example: 'Write notes in your notebook.', translation: '笔记本', category: '学校' },
+      { word: 'pencil', phonetic: '/ˈpensl/', example: 'I write with a pencil.', translation: '铅笔', category: '学校' },
+      { word: 'pen', phonetic: '/pen/', example: 'Lend me your pen, please.', translation: '钢笔/圆珠笔', category: '学校' },
+      { word: 'ruler', phonetic: '/ˈruːlə(r)/', example: 'Use a ruler to draw a line.', translation: '尺子', category: '学校' },
+      { word: 'dictionary', phonetic: '/ˈdɪkʃənri/', example: 'Look it up in the dictionary.', translation: '字典', category: '学校' },
+      { word: 'library', phonetic: '/ˈlaɪbrəri/', example: 'I study in the library.', translation: '图书馆', category: '学校' },
+      { word: 'computer', phonetic: '/kəmˈpjuːtə(r)/', example: 'I use my computer for homework.', translation: '电脑', category: '学校' },
+      { word: 'maths', phonetic: '/mæθs/', example: 'I enjoy maths class.', translation: '数学', category: '学校' },
+      { word: 'science', phonetic: '/ˈsaɪəns/', example: 'Science is my favourite subject.', translation: '科学', category: '学校' },
+      { word: 'history', phonetic: '/ˈhɪstri/', example: 'We study history on Fridays.', translation: '历史', category: '学校' },
+      { word: 'geography', phonetic: '/dʒiˈɒɡrəfi/', example: 'Geography is about the world.', translation: '地理', category: '学校' },
+      { word: 'art', phonetic: '/ɑːt/', example: 'I love doing art at school.', translation: '美术/艺术', category: '学校' },
+      { word: 'subject', phonetic: '/ˈsʌbdʒɪkt/', example: 'Which subject do you like best?', translation: '科目', category: '学校' },
+      { word: 'answer', phonetic: '/ˈɑːnsə(r)/', example: 'What is the answer to question 3?', translation: '答案', category: '学校' },
+      { word: 'question', phonetic: '/ˈkwestʃən/', example: 'Ask me any question.', translation: '问题', category: '学校' },
+      { word: 'grade', phonetic: '/ɡreɪd/', example: 'I got a good grade in the exam.', translation: '成绩/年级', category: '学校' },
+      // 旅行 (25个)
+      { word: 'holiday', phonetic: '/ˈhɒlɪdeɪ/', example: 'We are going on holiday.', translation: '假期', category: '旅行' },
+      { word: 'travel', phonetic: '/ˈtrævl/', example: 'I love to travel the world.', translation: '旅行', category: '旅行' },
+      { word: 'trip', phonetic: '/trɪp/', example: 'We went on a trip to Paris.', translation: '旅途/出行', category: '旅行' },
+      { word: 'ticket', phonetic: '/ˈtɪkɪt/', example: 'I need a ticket for the train.', translation: '票', category: '旅行' },
+      { word: 'hotel', phonetic: '/həʊˈtel/', example: 'We stayed in a hotel.', translation: '酒店', category: '旅行' },
+      { word: 'airport', phonetic: '/ˈeəpɔːt/', example: 'We need to get to the airport.', translation: '机场', category: '旅行' },
+      { word: 'train', phonetic: '/treɪn/', example: 'The train leaves at nine.', translation: '火车', category: '旅行' },
+      { word: 'bus', phonetic: '/bʌs/', example: 'I take the bus to school.', translation: '公共汽车', category: '旅行' },
+      { word: 'taxi', phonetic: '/ˈtæksi/', example: 'Shall we take a taxi?', translation: '出租车', category: '旅行' },
+      { word: 'plane', phonetic: '/pleɪn/', example: 'We travelled by plane.', translation: '飞机', category: '旅行' },
+      { word: 'boat', phonetic: '/bəʊt/', example: 'We took a boat trip.', translation: '船', category: '旅行' },
+      { word: 'station', phonetic: '/ˈsteɪʃn/', example: 'Meet me at the station.', translation: '车站', category: '旅行' },
+      { word: 'passport', phonetic: '/ˈpɑːspɔːt/', example: 'Don\'t forget your passport.', translation: '护照', category: '旅行' },
+      { word: 'luggage', phonetic: '/ˈlʌɡɪdʒ/', example: 'My luggage is too heavy.', translation: '行李', category: '旅行' },
+      { word: 'map', phonetic: '/mæp/', example: 'Can I have a map of the city?', translation: '地图', category: '旅行' },
+      { word: 'city', phonetic: '/ˈsɪti/', example: 'London is a big city.', translation: '城市', category: '旅行' },
+      { word: 'country', phonetic: '/ˈkʌntri/', example: 'Which country are you from?', translation: '国家', category: '旅行' },
+      { word: 'beach', phonetic: '/biːtʃ/', example: 'I love going to the beach.', translation: '沙滩', category: '旅行' },
+      { word: 'mountain', phonetic: '/ˈmaʊntən/', example: 'We climbed the mountain.', translation: '山', category: '旅行' },
+      { word: 'museum', phonetic: '/mjuːˈziːəm/', example: 'Let\'s visit the museum.', translation: '博物馆', category: '旅行' },
+      { word: 'restaurant', phonetic: '/ˈrestrɒnt/', example: 'We had dinner at a restaurant.', translation: '餐厅', category: '旅行' },
+      { word: 'shop', phonetic: '/ʃɒp/', example: 'I need to go shopping.', translation: '商店/购物', category: '旅行' },
+      { word: 'address', phonetic: '/əˈdres/', example: 'What\'s your hotel address?', translation: '地址', category: '旅行' },
+      { word: 'direction', phonetic: '/dɪˈrekʃn/', example: 'Can you give me directions?', translation: '方向/指路', category: '旅行' },
+      { word: 'foreign', phonetic: '/ˈfɒrən/', example: 'I enjoy learning foreign languages.', translation: '外国的', category: '旅行' },
+      // 食物 (25个)
+      { word: 'food', phonetic: '/fuːd/', example: 'The food here is delicious.', translation: '食物', category: '食物' },
+      { word: 'water', phonetic: '/ˈwɔːtə(r)/', example: 'Would you like some water?', translation: '水', category: '食物' },
+      { word: 'apple', phonetic: '/ˈæpl/', example: 'An apple a day keeps the doctor away.', translation: '苹果', category: '食物' },
+      { word: 'banana', phonetic: '/bəˈnɑːnə/', example: 'Monkeys like bananas.', translation: '香蕉', category: '食物' },
+      { word: 'orange', phonetic: '/ˈɒrɪndʒ/', example: 'I have an orange for breakfast.', translation: '橙子', category: '食物' },
+      { word: 'bread', phonetic: '/bred/', example: 'I eat bread for breakfast.', translation: '面包', category: '食物' },
+      { word: 'rice', phonetic: '/raɪs/', example: 'We have rice for dinner.', translation: '米饭', category: '食物' },
+      { word: 'milk', phonetic: '/mɪlk/', example: 'Children should drink milk.', translation: '牛奶', category: '食物' },
+      { word: 'juice', phonetic: '/dʒuːs/', example: 'I drink orange juice every day.', translation: '果汁', category: '食物' },
+      { word: 'tea', phonetic: '/tiː/', example: 'Would you like a cup of tea?', translation: '茶', category: '食物' },
+      { word: 'coffee', phonetic: '/ˈkɒfi/', example: 'I need a coffee in the morning.', translation: '咖啡', category: '食物' },
+      { word: 'cake', phonetic: '/keɪk/', example: 'She made a birthday cake.', translation: '蛋糕', category: '食物' },
+      { word: 'pizza', phonetic: '/ˈpiːtsə/', example: 'Pizza is my favourite food.', translation: '披萨', category: '食物' },
+      { word: 'sandwich', phonetic: '/ˈsænwɪdʒ/', example: 'I had a sandwich for lunch.', translation: '三明治', category: '食物' },
+      { word: 'soup', phonetic: '/suːp/', example: 'The soup smells wonderful.', translation: '汤', category: '食物' },
+      { word: 'salad', phonetic: '/ˈsæləd/', example: 'I always have a salad for lunch.', translation: '沙拉', category: '食物' },
+      { word: 'chicken', phonetic: '/ˈtʃɪkɪn/', example: 'I love roast chicken.', translation: '鸡肉', category: '食物' },
+      { word: 'fish', phonetic: '/fɪʃ/', example: 'Fish is very healthy.', translation: '鱼', category: '食物' },
+      { word: 'egg', phonetic: '/eɡ/', example: 'I have two eggs for breakfast.', translation: '鸡蛋', category: '食物' },
+      { word: 'sugar', phonetic: '/ˈʃʊɡə(r)/', example: 'Do you take sugar in your tea?', translation: '糖', category: '食物' },
+      { word: 'butter', phonetic: '/ˈbʌtə(r)/', example: 'Spread butter on the toast.', translation: '黄油', category: '食物' },
+      { word: 'vegetable', phonetic: '/ˈvedʒtəbl/', example: 'Eat more vegetables every day.', translation: '蔬菜', category: '食物' },
+      { word: 'fruit', phonetic: '/fruːt/', example: 'Fruit is good for your health.', translation: '水果', category: '食物' },
+      { word: 'meat', phonetic: '/miːt/', example: 'Do you eat meat?', translation: '肉', category: '食物' },
+      { word: 'chocolate', phonetic: '/ˈtʃɒklət/', example: 'I love chocolate ice cream.', translation: '巧克力', category: '食物' },
+      // 身体 (20个)
+      { word: 'hand', phonetic: '/hænd/', example: 'Wash your hands before eating.', translation: '手', category: '身体' },
+      { word: 'eye', phonetic: '/aɪ/', example: 'She has beautiful eyes.', translation: '眼睛', category: '身体' },
+      { word: 'head', phonetic: '/hed/', example: 'My head hurts a little.', translation: '头', category: '身体' },
+      { word: 'face', phonetic: '/feɪs/', example: 'Wash your face every morning.', translation: '脸', category: '身体' },
+      { word: 'hair', phonetic: '/heə(r)/', example: 'She has long brown hair.', translation: '头发', category: '身体' },
+      { word: 'ear', phonetic: '/ɪə(r)/', example: 'The music hurts my ears.', translation: '耳朵', category: '身体' },
+      { word: 'nose', phonetic: '/nəʊz/', example: 'I have a cold and runny nose.', translation: '鼻子', category: '身体' },
+      { word: 'mouth', phonetic: '/maʊθ/', example: 'Open your mouth wide.', translation: '嘴巴', category: '身体' },
+      { word: 'tooth', phonetic: '/tuːθ/', example: 'Brush your teeth twice a day.', translation: '牙齿', category: '身体' },
+      { word: 'arm', phonetic: '/ɑːm/', example: 'My arm is sore after swimming.', translation: '手臂', category: '身体' },
+      { word: 'leg', phonetic: '/leɡ/', example: 'He broke his leg.', translation: '腿', category: '身体' },
+      { word: 'foot', phonetic: '/fʊt/', example: 'My foot hurts.', translation: '脚', category: '身体' },
+      { word: 'back', phonetic: '/bæk/', example: 'I have a bad back.', translation: '背部', category: '身体' },
+      { word: 'shoulder', phonetic: '/ˈʃəʊldə(r)/', example: 'He put his arm around her shoulder.', translation: '肩膀', category: '身体' },
+      { word: 'stomach', phonetic: '/ˈstʌmək/', example: 'I have a stomachache.', translation: '胃/腹部', category: '身体' },
+      { word: 'finger', phonetic: '/ˈfɪŋɡə(r)/', example: 'I cut my finger.', translation: '手指', category: '身体' },
+      { word: 'neck', phonetic: '/nek/', example: 'My neck is stiff.', translation: '脖子', category: '身体' },
+      { word: 'heart', phonetic: '/hɑːt/', example: 'Exercise is good for your heart.', translation: '心脏', category: '身体' },
+      { word: 'blood', phonetic: '/blʌd/', example: 'The blood test was fine.', translation: '血液', category: '身体' },
+      { word: 'skin', phonetic: '/skɪn/', example: 'Protect your skin from the sun.', translation: '皮肤', category: '身体' },
+      // 购物 (25个)
+      { word: 'price', phonetic: '/praɪs/', example: 'What\'s the price of this?', translation: '价格', category: '购物' },
+      { word: 'buy', phonetic: '/baɪ/', example: 'I want to buy a new phone.', translation: '买', category: '购物' },
+      { word: 'sell', phonetic: '/sel/', example: 'They sell clothes here.', translation: '卖', category: '购物' },
+      { word: 'pay', phonetic: '/peɪ/', example: 'How would you like to pay?', translation: '支付', category: '购物' },
+      { word: 'cheap', phonetic: '/tʃiːp/', example: 'This jacket is really cheap.', translation: '便宜的', category: '购物' },
+      { word: 'expensive', phonetic: '/ɪkˈspensɪv/', example: 'This watch is too expensive.', translation: '昂贵的', category: '购物' },
+      { word: 'change', phonetic: '/tʃeɪndʒ/', example: 'Here is your change.', translation: '零钱/找零', category: '购物' },
+      { word: 'receipt', phonetic: '/rɪˈsiːt/', example: 'Can I have a receipt please?', translation: '收据', category: '购物' },
+      { word: 'discount', phonetic: '/ˈdɪskaʊnt/', example: 'Is there a student discount?', translation: '折扣', category: '购物' },
+      { word: 'size', phonetic: '/saɪz/', example: 'What size shoes do you wear?', translation: '尺寸', category: '购物' },
+      { word: 'clothes', phonetic: '/kləʊðz/', example: 'I need to buy some new clothes.', translation: '衣服', category: '购物' },
+      { word: 'shirt', phonetic: '/ʃɜːt/', example: 'He wore a white shirt.', translation: '衬衫', category: '购物' },
+      { word: 'dress', phonetic: '/dres/', example: 'She wore a blue dress.', translation: '连衣裙', category: '购物' },
+      { word: 'shoes', phonetic: '/ʃuːz/', example: 'These shoes are very comfortable.', translation: '鞋子', category: '购物' },
+      { word: 'bag', phonetic: '/bæɡ/', example: 'I like your new bag.', translation: '包', category: '购物' },
+      { word: 'hat', phonetic: '/hæt/', example: 'She wore a big hat.', translation: '帽子', category: '购物' },
+      { word: 'coat', phonetic: '/kəʊt/', example: 'It\'s cold, wear your coat.', translation: '外套', category: '购物' },
+      { word: 'trousers', phonetic: '/ˈtraʊzəz/', example: 'He is wearing black trousers.', translation: '裤子', category: '购物' },
+      { word: 'skirt', phonetic: '/skɜːt/', example: 'She is wearing a short skirt.', translation: '裙子', category: '购物' },
+      { word: 'market', phonetic: '/ˈmɑːkɪt/', example: 'We go to the market every Saturday.', translation: '市场', category: '购物' },
+      { word: 'supermarket', phonetic: '/ˈsuːpəmɑːkɪt/', example: 'I shop at the supermarket.', translation: '超市', category: '购物' },
+      { word: 'catalogue', phonetic: '/ˈkætəlɒɡ/', example: 'Look in the catalogue for ideas.', translation: '目录/产品册', category: '购物' },
+      { word: 'customer', phonetic: '/ˈkʌstəmə(r)/', example: 'The customer is always right.', translation: '顾客', category: '购物' },
+      { word: 'queue', phonetic: '/kjuː/', example: 'Please join the queue.', translation: '排队', category: '购物' },
+      { word: 'credit card', phonetic: '/ˈkredɪt kɑːd/', example: 'Can I pay by credit card?', translation: '信用卡', category: '购物' },
+      // 职业 (25个)
+      { word: 'job', phonetic: '/dʒɒb/', example: 'What\'s your job?', translation: '工作/职业', category: '职业' },
+      { word: 'work', phonetic: '/wɜːk/', example: 'I work in an office.', translation: '工作', category: '职业' },
+      { word: 'office', phonetic: '/ˈɒfɪs/', example: 'He works in the city office.', translation: '办公室', category: '职业' },
+      { word: 'doctor', phonetic: '/ˈdɒktə(r)/', example: 'I want to be a doctor.', translation: '医生', category: '职业' },
+      { word: 'nurse', phonetic: '/nɜːs/', example: 'The nurse is very kind.', translation: '护士', category: '职业' },
+      { word: 'police', phonetic: '/pəˈliːs/', example: 'Call the police!', translation: '警察', category: '职业' },
+      { word: 'fireman', phonetic: '/ˈfaɪəmən/', example: 'The fireman saved the cat.', translation: '消防员', category: '职业' },
+      { word: 'engineer', phonetic: '/ˌendʒɪˈnɪə(r)/', example: 'My dad is an engineer.', translation: '工程师', category: '职业' },
+      { word: 'artist', phonetic: '/ˈɑːtɪst/', example: 'She is a talented artist.', translation: '艺术家', category: '职业' },
+      { word: 'singer', phonetic: '/ˈsɪŋə(r)/', example: 'He is my favourite singer.', translation: '歌手', category: '职业' },
+      { word: 'actor', phonetic: '/ˈæktə(r)/', example: 'He is a famous actor.', translation: '演员', category: '职业' },
+      { word: 'driver', phonetic: '/ˈdraɪvə(r)/', example: 'She is a bus driver.', translation: '司机', category: '职业' },
+      { word: 'farmer', phonetic: '/ˈfɑːmə(r)/', example: 'The farmer grows vegetables.', translation: '农民', category: '职业' },
+      { word: 'chef', phonetic: '/ʃef/', example: 'The chef prepared a great meal.', translation: '厨师', category: '职业' },
+      { word: 'waiter', phonetic: '/ˈweɪtə(r)/', example: 'The waiter brought the menu.', translation: '服务员', category: '职业' },
+      { word: 'pilot', phonetic: '/ˈpaɪlət/', example: 'She wants to be a pilot.', translation: '飞行员', category: '职业' },
+      { word: 'manager', phonetic: '/ˈmænɪdʒə(r)/', example: 'He became manager last year.', translation: '经理', category: '职业' },
+      { word: 'journalist', phonetic: '/ˈdʒɜːnəlɪst/', example: 'She is a TV journalist.', translation: '记者', category: '职业' },
+      { word: 'scientist', phonetic: '/ˈsaɪəntɪst/', example: 'Scientists study how things work.', translation: '科学家', category: '职业' },
+      { word: 'lawyer', phonetic: '/ˈlɔːjə(r)/', example: 'My sister is a lawyer.', translation: '律师', category: '职业' },
+      { word: 'dentist', phonetic: '/ˈdentɪst/', example: 'I have an appointment with the dentist.', translation: '牙医', category: '职业' },
+      { word: 'vet', phonetic: '/vet/', example: 'Take the cat to the vet.', translation: '兽医', category: '职业' },
+      { word: 'secretary', phonetic: '/ˈsekrətri/', example: 'She works as a secretary.', translation: '秘书', category: '职业' },
+      { word: 'volunteer', phonetic: '/ˌvɒlənˈtɪə(r)/', example: 'I volunteer at a charity.', translation: '志愿者', category: '职业' },
+      { word: 'businessman', phonetic: '/ˈbɪznəsmən/', example: 'He is a successful businessman.', translation: '商人', category: '职业' },
+      // 家庭 (20个)
+      { word: 'mother', phonetic: '/ˈmʌðə(r)/', example: 'My mother is a teacher.', translation: '妈妈', category: '家庭' },
+      { word: 'father', phonetic: '/ˈfɑːðə(r)/', example: 'My father works in a hospital.', translation: '爸爸', category: '家庭' },
+      { word: 'sister', phonetic: '/ˈsɪstə(r)/', example: 'I have one sister.', translation: '姐妹', category: '家庭' },
+      { word: 'brother', phonetic: '/ˈbrʌðə(r)/', example: 'My brother is younger than me.', translation: '兄弟', category: '家庭' },
+      { word: 'grandma', phonetic: '/ˈɡrænmɑː/', example: 'My grandma makes great soup.', translation: '奶奶/外婆', category: '家庭' },
+      { word: 'grandpa', phonetic: '/ˈɡrænpɑː/', example: 'I visit my grandpa every week.', translation: '爷爷/外公', category: '家庭' },
+      { word: 'parents', phonetic: '/ˈpeərənts/', example: 'My parents are very kind.', translation: '父母', category: '家庭' },
+      { word: 'uncle', phonetic: '/ˈʌŋkl/', example: 'My uncle lives in London.', translation: '叔叔/舅舅', category: '家庭' },
+      { word: 'aunt', phonetic: '/ɑːnt/', example: 'My aunt is a nurse.', translation: '阿姨/姑姑', category: '家庭' },
+      { word: 'cousin', phonetic: '/ˈkʌzn/', example: 'I have three cousins.', translation: '表/堂兄弟姐妹', category: '家庭' },
+      { word: 'husband', phonetic: '/ˈhʌzbənd/', example: 'Her husband is very tall.', translation: '丈夫', category: '家庭' },
+      { word: 'wife', phonetic: '/waɪf/', example: 'His wife is a doctor.', translation: '妻子', category: '家庭' },
+      { word: 'son', phonetic: '/sʌn/', example: 'Their son is ten years old.', translation: '儿子', category: '家庭' },
+      { word: 'daughter', phonetic: '/ˈdɔːtə(r)/', example: 'Their daughter loves music.', translation: '女儿', category: '家庭' },
+      { word: 'baby', phonetic: '/ˈbeɪbi/', example: 'The baby is sleeping.', translation: '婴儿', category: '家庭' },
+      { word: 'child', phonetic: '/tʃaɪld/', example: 'Every child needs love.', translation: '孩子', category: '家庭' },
+      { word: 'teenager', phonetic: '/ˈtiːneɪdʒə(r)/', example: 'He is a teenager now.', translation: '青少年', category: '家庭' },
+      { word: 'adult', phonetic: '/ˈædʌlt/', example: 'Only adults can enter.', translation: '成年人', category: '家庭' },
+      { word: 'neighbour', phonetic: '/ˈneɪbə(r)/', example: 'Our neighbours are very friendly.', translation: '邻居', category: '家庭' },
+      { word: 'relative', phonetic: '/ˈrelətɪv/', example: 'We visit relatives at New Year.', translation: '亲戚', category: '家庭' }
+    ];
+
+    // 阅读数据
+    const readingData = [
+      // Part 1: 告示/标牌 (5篇)
+      {
+        part: 'Part 1',
+        title: '图书馆告示',
+        text: '"Please be quiet. No eating or drinking in the library. Books must be returned within 2 weeks. Computers are available on the first floor."',
+        question: '在图书馆可以做什么？',
+        options: ['大声讲话', '吃零食', '用电脑', '带走图书不用归还'],
+        answer: 2
+      },
+      {
+        part: 'Part 1',
+        title: '游泳池告示',
+        text: '"Welcome to City Pool. Opening hours: 7 am – 9 pm daily. Children under 12 must be with an adult. No running near the pool. Lockers available – bring your own padlock."',
+        question: '10岁的孩子来游泳，需要什么？',
+        options: ['带游泳帽', '带成年人陪同', '提前预约', '买年卡'],
+        answer: 1
+      },
+      {
+        part: 'Part 1',
+        title: '餐厅告示',
+        text: '"Bridge Street Café – Open Monday to Saturday, 8am to 6pm. Sunday: closed. Last orders 30 minutes before closing. Free Wi-Fi for customers."',
+        question: '顾客周日想去这家咖啡馆，结果怎样？',
+        options: ['可以正常去', '只能外卖', '周日关闭', '需要预约'],
+        answer: 2
+      },
+      {
+        part: 'Part 1',
+        title: '停车场告示',
+        text: '"Car Park Rules: Maximum stay 2 hours. Ticket must be displayed. Disabled parking spaces – permit holders only. CCTV in operation 24 hours."',
+        question: '关于停车场，以下哪项正确？',
+        options: ['可以停超过2小时', '残疾人车位需要许可证', '没有监控摄像头', '停车免费'],
+        answer: 1
+      },
+      {
+        part: 'Part 1',
+        title: '学校公告',
+        text: '"School Sports Day – Friday 15th June. Parents are invited to watch. Students should wear PE kit and bring a packed lunch. The event will be cancelled if it rains."',
+        question: '如果下雨，运动会会怎样？',
+        options: ['推迟到下周', '在室内举行', '取消', '照常进行'],
+        answer: 2
+      },
+      // Part 2: 短文匹配 (4篇)
+      {
+        part: 'Part 2',
+        title: '旅游景点介绍',
+        text: 'The National History Museum is one of the most popular tourist attractions in London. It is free to enter and open every day from 10am to 5:50pm. The museum has over 80 million items, including dinosaur skeletons and precious gems. Guided tours are available on weekends.',
+        question: '关于国家历史博物馆，哪项说法正确？',
+        options: ['需要购票入场', '周一关闭', '有周末导览服务', '展品不到100万件'],
+        answer: 2
+      },
+      {
+        part: 'Part 2',
+        title: '体育活动介绍',
+        text: 'Football Club is looking for new members! We train every Tuesday and Thursday evening from 6pm to 8pm at City Sports Ground. You need to be aged 12-18. Boots and shin pads are required. First session is free. Contact coach Mike: 07700 900123.',
+        question: '关于足球俱乐部，哪项说法正确？',
+        options: ['每天训练', '年龄不限', '第一次免费', '需要自带球'],
+        answer: 2
+      },
+      {
+        part: 'Part 2',
+        title: '课程信息',
+        text: 'Learn to cook! Evening cooking classes for beginners start on 5th March. Classes are on Monday evenings, 7pm-9pm for 6 weeks. The cost is £120 for the full course. All equipment is provided. Maximum 12 students per class. Book your place now at citylearning.co.uk.',
+        question: '关于烹饪课，以下哪项正确？',
+        options: ['课程在白天进行', '每节课2小时', '学生需要自带设备', '每班最多20人'],
+        answer: 1
+      },
+      {
+        part: 'Part 2',
+        title: '活动通知',
+        text: 'Summer Concert in the Park – Saturday 20th July, 2pm-7pm. Entry is £5 for adults and free for children under 16. Bring a picnic! There will be local bands, food stalls, and games for children. In case of bad weather, the event will move inside to the Town Hall.',
+        question: '恶劣天气时，音乐会将在哪里举行？',
+        options: ['推迟到下周', '取消', '市政厅室内', '学校体育馆'],
+        answer: 2
+      },
+      // Part 3: 长文阅读 (5篇)
+      {
+        part: 'Part 3',
+        title: '邮件：周末计划',
+        text: 'Hi Anna,\n\nHow are you? I\'m writing to ask if you\'d like to come to my house this Saturday. My family is planning to have a barbecue in the garden. It starts at 2pm and we\'ll probably finish around 7pm.\n\nPlease let me know if you can come. You can bring your brother too!\n\nBest wishes,\nSophie',
+        question: 'Sophie 邀请 Anna 做什么？',
+        options: ['一起购物', '来家里烧烤', '去看电影', '参加生日派对'],
+        answer: 1
+      },
+      {
+        part: 'Part 3',
+        title: '邮件：换工作',
+        text: 'Dear Tom,\n\nI have some exciting news! I just got a new job at the city library. I will start working there next month. The job is closer to my home and the pay is better. I am also really happy because I love books!\n\nI hope everything is going well with you.\n\nAll the best,\nSarah',
+        question: 'Sarah 为什么对新工作感到高兴？',
+        options: ['离家远，薪资低', '离家近且热爱书籍', '可以免费借书', '工作时间灵活'],
+        answer: 1
+      },
+      {
+        part: 'Part 3',
+        title: '短文：我的学校生活',
+        text: 'My name is James. I go to Greenfield School. My favourite subject is science because the experiments are exciting. I also enjoy PE, but maths is quite difficult for me. After school, I usually play football with my friends for about an hour before doing homework.',
+        question: 'James 放学后通常做什么？',
+        options: ['直接回家写作业', '先打一小时足球再写作业', '去图书馆学习', '参加科学俱乐部'],
+        answer: 1
+      },
+      {
+        part: 'Part 3',
+        title: '短文：假期经历',
+        text: 'Last summer, my family went to Spain for two weeks. We stayed in a hotel near the beach. Every morning, we swam in the sea and built sandcastles. In the afternoons, we visited local markets and tried Spanish food. The paella was my favourite. I can\'t wait to go back!',
+        question: '这家人每天下午做什么？',
+        options: ['在海边游泳', '参观当地市场', '在酒店休息', '打网球'],
+        answer: 1
+      },
+      {
+        part: 'Part 3',
+        title: '短文：宠物介绍',
+        text: 'I have a dog called Max. He is a golden retriever and he is three years old. Max loves going for walks and playing with his ball in the garden. He is very friendly with people, but he is afraid of cats! I have had Max since he was a puppy and he is my best friend.',
+        question: 'Max 害怕什么？',
+        options: ['大声声音', '陌生人', '猫', '汽车'],
+        answer: 2
+      },
+      // Part 4: 长篇阅读理解 (3篇)
+      {
+        part: 'Part 4',
+        title: '短文：奥运冠军',
+        text: 'Emma started swimming when she was five years old. She trained six days a week and often got up at 5 am to practice. By the time she was fifteen, she was competing at national level. At nineteen, she won her first Olympic gold medal. "Hard work and believing in yourself is everything," she said.',
+        question: 'Emma 几岁赢得第一枚奥运金牌？',
+        options: ['15岁', '17岁', '19岁', '21岁'],
+        answer: 2
+      },
+      {
+        part: 'Part 4',
+        title: '短文：环保小达人',
+        text: 'Lily started an environmental club at her school last year. Every week, the club collects rubbish from local parks. They have also planted 50 trees this year and given talks to younger students about recycling. Lily hopes to encourage more people to care about the environment.',
+        question: 'Lily 的环保俱乐部今年做了什么？',
+        options: ['清理了海滩', '种了50棵树', '回收了1000个瓶子', '建立了一个公园'],
+        answer: 1
+      },
+      {
+        part: 'Part 4',
+        title: '短文：创业故事',
+        text: 'When Jack was 14, he began making and selling handmade bracelets to his classmates. By the end of the school year, he had saved enough money to buy a second-hand bicycle. Now he is 17 and sells his jewellery online. He hopes to have his own shop one day.',
+        question: 'Jack 用卖手链赚来的第一笔钱买了什么？',
+        options: ['一台电脑', '手工材料', '一辆二手自行车', '开了一家店'],
+        answer: 2
+      },
+      // Part 5: 词汇填空理解 (3篇)
+      {
+        part: 'Part 5',
+        title: '短文：城市公交',
+        text: 'Taking the bus is a great way to get around the city. Buses run every 10 minutes during rush hour and every 20 minutes at other times. You can pay with cash or use an Oyster card. The bus is cheaper than a taxi and better for the environment.',
+        question: '高峰期公交车多久一班？',
+        options: ['5分钟', '10分钟', '15分钟', '20分钟'],
+        answer: 1
+      },
+      {
+        part: 'Part 5',
+        title: '短文：健康饮食',
+        text: 'Doctors say that eating five portions of fruit and vegetables a day is very important for good health. Fresh, frozen, and tinned vegetables all count. Drinking plenty of water is also important. Try to eat less sugar and fat to stay healthy.',
+        question: '医生建议每天吃多少份蔬菜和水果？',
+        options: ['3份', '4份', '5份', '6份'],
+        answer: 2
+      },
+      {
+        part: 'Part 5',
+        title: '短文：网络安全',
+        text: 'When using the internet, it is important to stay safe. Never share personal information such as your address or phone number with strangers online. Use a strong password and change it regularly. If something makes you feel uncomfortable online, always tell a trusted adult.',
+        question: '网络上不应该与陌生人分享什么？',
+        options: ['你喜欢的音乐', '你的地址和电话', '你最喜欢的电影', '你的学校名字'],
+        answer: 1
+      }
+    ];
+
+    // 写作数据
+    const writingData = [
+      // 邮件写作 (7套)
+      {
+        type: '邮件',
+        prompt: '给你的朋友写一封邮件，告诉他/她你最喜欢的电影是什么，为什么喜欢。（20-35词）',
+        wordMin: 20, wordMax: 35,
+        tips: ['说出电影名称', '说明为什么喜欢', '问朋友是否看过'],
+        reference: 'Hi,\n\nMy favourite film is "Toy Story". It is very funny and the characters are cute. I watch it every weekend.\n\nHave you seen it? I hope you enjoy it too!\n\nLove, [Your Name]'
+      },
+      {
+        type: '邮件',
+        prompt: '给你的英国笔友写一封邮件，介绍你的学校生活。包括：你最喜欢的科目和放学后做什么。（25-40词）',
+        wordMin: 25, wordMax: 40,
+        tips: ['提到你最喜欢的科目', '说明原因', '描述放学后的活动'],
+        reference: 'Hi,\n\nI go to Greenfield School. My favourite subject is science because the experiments are exciting. After school, I usually play football with my friends for an hour.\n\nWhat about you?\n\nBest wishes, [Your Name]'
+      },
+      {
+        type: '邮件',
+        prompt: '给你的朋友写一封邮件，邀请他/她参加你的生日派对。说明时间、地点和活动。（25-40词）',
+        wordMin: 25, wordMax: 40,
+        tips: ['说清楚日期和时间', '告知地点', '描述派对活动'],
+        reference: 'Hi,\n\nI am having a birthday party on Saturday 15th at my house. It starts at 3pm. We will have cake, music and lots of games. I really hope you can come!\n\nLove, [Your Name]'
+      },
+      {
+        type: '邮件',
+        prompt: '你的朋友问你暑假计划。给他/她写一封邮件，描述你的暑假计划。（20-35词）',
+        wordMin: 20, wordMax: 35,
+        tips: ['说明去哪里', '说明和谁去', '描述你想做的事情'],
+        reference: 'Hi,\n\nThis summer I am going to Spain with my family for two weeks. We are going to stay near the beach. I can\'t wait to swim and try the local food!\n\nSee you soon, [Your Name]'
+      },
+      {
+        type: '邮件',
+        prompt: '给你的老师写一封邮件，解释为什么你明天不能来上学。（15-30词）',
+        wordMin: 15, wordMax: 30,
+        tips: ['说明原因', '表示道歉', '说明你会补作业'],
+        reference: 'Dear Mr/Ms [Name],\n\nI am sorry but I cannot come to school tomorrow. I have a doctor\'s appointment in the morning. I will make sure to complete all the homework.\n\nYours sincerely, [Your Name]'
+      },
+      {
+        type: '邮件',
+        prompt: '给你的朋友写一封邮件，推荐一本好书。说明书名、内容和你为什么喜欢。（25-40词）',
+        wordMin: 25, wordMax: 40,
+        tips: ['写出书名', '简单介绍内容', '解释为什么推荐'],
+        reference: 'Hi,\n\nI just finished reading "Harry Potter". It\'s about a young wizard who goes to a special school. The story is magical and exciting. I think you will love it too!\n\nBest wishes, [Your Name]'
+      },
+      {
+        type: '邮件',
+        prompt: '你刚搬到新城市。给你的旧朋友写一封邮件，描述新家和新学校。（25-40词）',
+        wordMin: 25, wordMax: 40,
+        tips: ['描述新家', '描述新学校', '表达你的感受'],
+        reference: 'Hi,\n\nI have moved to a new city! My new house is big and has a lovely garden. My new school is friendly and the teachers are kind. I miss you but I am happy here!\n\nLots of love, [Your Name]'
+      },
+      // 便条写作 (5套)
+      {
+        type: '便条',
+        prompt: '给你的妈妈写一张便条，告诉她你去了朋友家，6点回来。（15-25词）',
+        wordMin: 15, wordMax: 25,
+        tips: ['说明去了哪里', '说明几点回来', '让她不要担心'],
+        reference: 'Dear Mum,\n\nI have gone to Tom\'s house to play. I will be back at 6 o\'clock. Don\'t worry!\n\nLove, [Your Name]'
+      },
+      {
+        type: '便条',
+        prompt: '给你的同学写一张便条，告诉他/她你借了他/她的书，明天会还回去。（15-25词）',
+        wordMin: 15, wordMax: 25,
+        tips: ['说明借了什么', '表示感谢', '承诺什么时候归还'],
+        reference: 'Hi,\n\nI have borrowed your English book. Thank you very much! I will give it back to you tomorrow morning.\n\nThanks, [Your Name]'
+      },
+      {
+        type: '便条',
+        prompt: '给你的爸爸写一张便条，提醒他下午5点来学校接你，因为有钢琴课结束时间改了。（20-30词）',
+        wordMin: 20, wordMax: 30,
+        tips: ['说明时间改变', '告知正确时间', '说明地点'],
+        reference: 'Dear Dad,\n\nPlease remember to pick me up at 5pm today, not 4pm. My piano lesson finishes later this week. Please wait at the school gate.\n\nLove, [Your Name]'
+      },
+      {
+        type: '便条',
+        prompt: '给你的朋友留一张便条，告诉他/她你等了30分钟但他/她没来，你先回家了。（20-30词）',
+        wordMin: 20, wordMax: 30,
+        tips: ['说明你等了多久', '表达你先离开', '说明联系方式'],
+        reference: 'Hi,\n\nI waited for you at the library for 30 minutes but you didn\'t come. I have gone home. Please call me when you get this!\n\n[Your Name]'
+      },
+      {
+        type: '便条',
+        prompt: '给你的邻居写一张便条，感谢他/她上周帮你照看了你的猫。（15-25词）',
+        wordMin: 15, wordMax: 25,
+        tips: ['表示感谢', '提到具体帮助', '表示你欠他/她一个人情'],
+        reference: 'Dear [Neighbour],\n\nThank you so much for looking after my cat last week. He was very happy when I got home. I owe you one!\n\nBest wishes, [Your Name]'
+      },
+      // 故事/描述写作 (5套)
+      {
+        type: '故事',
+        prompt: '看图写故事：一个男孩在公园里发现了一只受伤的小鸟。写出发生了什么事情。（25-40词）',
+        wordMin: 25, wordMax: 40,
+        tips: ['描述发现的场景', '说明男孩做了什么', '描述结局'],
+        reference: 'One day, Tom was walking in the park when he saw a small bird on the ground. It had a hurt wing. He carefully picked it up and took it to the vet. The bird soon got better.'
+      },
+      {
+        type: '故事',
+        prompt: '描述一次难忘的学校旅行经历。说明去了哪里，看到了什么，你最喜欢什么。（30-45词）',
+        wordMin: 30, wordMax: 45,
+        tips: ['说明旅行地点', '描述你看到或做到的事', '说明最难忘的部分'],
+        reference: 'Last month, our class visited the Science Museum in London. We saw rockets, computers and experiments. My favourite part was the space section. I learned so much. It was the best school trip ever!'
+      },
+      {
+        type: '故事',
+        prompt: '你的学校正在准备一本关于"健康生活"的小书。请写一段介绍健康饮食的内容。（25-40词）',
+        wordMin: 25, wordMax: 40,
+        tips: ['提到吃什么健康食物', '解释为什么重要', '给出建议'],
+        reference: 'Eating healthily is very important for your body. Try to eat five portions of fruit and vegetables every day. Drink plenty of water and avoid too much sugar. A healthy diet gives you energy and keeps you strong!'
+      },
+      {
+        type: '描述',
+        prompt: '描述你最好的朋友。包括外貌、性格和你们喜欢一起做什么。（30-45词）',
+        wordMin: 30, wordMax: 45,
+        tips: ['描述外貌特征', '描述性格特点', '说明共同爱好'],
+        reference: 'My best friend is Anna. She has long brown hair and a big smile. She is funny, kind and always helpful. We love cycling, watching films and going to the park together. She is the best friend I could ask for!'
+      },
+      {
+        type: '描述',
+        prompt: '你的城市正在建一个新的休闲中心，你有机会提出建议。写一篇短文说明你希望里面有什么以及为什么。（30-45词）',
+        wordMin: 30, wordMax: 45,
+        tips: ['提出2-3个具体建议', '解释每个建议的原因', '表达对中心的期待'],
+        reference: 'I would like the new centre to have a swimming pool, a skate park and a café. The pool is great for exercise. The skate park is fun for young people. The café is a good place to relax after activities. I think everyone would love it!'
+      },
+      // 卡片写作 (3套)
+      {
+        type: '卡片',
+        prompt: '给你的英国朋友写一张圣诞贺卡。表达祝福，提一件你期待的事，邀请他/她来你家。（20-30词）',
+        wordMin: 20, wordMax: 30,
+        tips: ['写上圣诞祝福', '分享你的期待', '发出邀请'],
+        reference: 'Dear [Name],\n\nWishing you a very happy Christmas! I am so excited about the holidays. Would you like to visit me in January?\n\nWith love, [Your Name]'
+      },
+      {
+        type: '卡片',
+        prompt: '给一位生病在家的同学写一张慰问卡，祝他/她早日康复，告诉他/她学校最近发生的一件有趣的事。（20-35词）',
+        wordMin: 20, wordMax: 35,
+        tips: ['表达关心', '说一件学校趣事', '鼓励早日回来'],
+        reference: 'Dear [Name],\n\nI hope you feel better soon! We all miss you. Today in science class, our experiment made a huge mess and everyone laughed! Come back quickly!\n\nYour friend, [Your Name]'
+      },
+      {
+        type: '卡片',
+        prompt: '你的朋友刚刚在比赛中获得了第一名。给他/她写一张祝贺卡。（15-25词）',
+        wordMin: 15, wordMax: 25,
+        tips: ['表示祝贺', '说明你为他/她骄傲', '表示期待一起庆祝'],
+        reference: 'Dear [Name],\n\nCongratulations on winning first place! I am so proud of you. Let\'s celebrate together soon!\n\nYour friend, [Your Name]'
+      }
+    ];
+
+    // 初始化
+    document.addEventListener('DOMContentLoaded', () => {
+      checkLoggedIn();
+      initVocabFilter();
+      loadListeningData();
+    });
+
+    function checkLoggedIn() {
+      const userStr = localStorage.getItem('ketUser');
+      if (!userStr) {
+        window.location.href = 'login.html';
+        return;
+      }
+      currentUser = JSON.parse(userStr);
+      updateUserUI();
+      loadProgress();
+    }
+
+    function updateUserUI() {
+      if (!currentUser) return;
+
+      const hour = new Date().getHours();
+      let greeting = '早上好';
+      if (hour >= 12 && hour < 18) greeting = '下午好';
+      if (hour >= 18) greeting = '晚上好';
+
+      document.getElementById('greeting').textContent = greeting;
+      document.getElementById('userName').textContent = currentUser.username;
+      document.getElementById('navAvatar').textContent = currentUser.avatarEmoji || '😊';
+    }
+
+    function switchPage(page) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+      document.getElementById(page + 'Page').classList.add('active');
+      event.currentTarget.classList.add('active');
+
+      if (page === 'progress') {
+        loadProgress();
+      }
+    }
+
+    function showModule(module) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById(module + 'Page').classList.add('active');
+
+      if (module === 'vocab') {
+        showVocabCard();
+      } else if (module === 'reading') {
+        renderReading();
+      } else if (module === 'listening') {
+        renderListening();
+      } else if (module === 'writing') {
+        renderWriting();
+      }
+    }
+
+    function goHome() {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('homePage').classList.add('active');
+      loadProgress();
+    }
+
+    function logout() {
+      localStorage.removeItem('ketUser');
+      window.location.href = 'login.html';
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+
+    // 词汇模块
+    function initVocabFilter() {
+      const categories = ['all', ...new Set(vocabData.map(v => v.category))];
+      const filterHtml = categories.map(cat => `
+        <div class="filter-chip ${cat === 'all' ? 'active' : ''}" onclick="filterVocab('${cat}')">
+          ${cat === 'all' ? '全部' : cat}
+        </div>
+      `).join('');
+      document.getElementById('vocabFilter').innerHTML = filterHtml;
+    }
+
+    function filterVocab(category) {
+      currentFilter = category;
+      document.querySelectorAll('.filter-chip').forEach(chip => {
+        chip.classList.toggle('active', chip.textContent === (category === 'all' ? '全部' : category));
+      });
+      currentVocabIndex = 0;
+      showVocabCard();
+    }
+
+    function getFilteredVocab() {
+      if (currentFilter === 'all') return vocabData;
+      return vocabData.filter(v => v.category === currentFilter);
+    }
+
+    function showVocabCard() {
+      const filtered = getFilteredVocab();
+      if (currentVocabIndex >= filtered.length) currentVocabIndex = 0;
+
+      const word = filtered[currentVocabIndex];
+      document.getElementById('vocabWord').textContent = word.word;
+      document.getElementById('vocabPhonetic').textContent = word.phonetic;
+      document.getElementById('vocabExample').textContent = word.example;
+      document.getElementById('vocabTranslation').textContent = word.translation;
+      document.getElementById('vocabTranslation').style.display = 'none';
+      isFlipped = false;
+    }
+
+    function flipCard() {
+      const transEl = document.getElementById('vocabTranslation');
+      isFlipped = !isFlipped;
+      transEl.style.display = isFlipped ? 'block' : 'none';
+    }
+
+    async function rateWord(rating) {
+      const xp = rating === 'hard' ? 5 : rating === 'medium' ? 10 : 15;
+      showToast(`+${xp} XP！`);
+
+      try {
+        await fetch(`${API_BASE}/api/vocab-progress`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            user_id: currentUser.id,
+            word: vocabData[currentVocabIndex].word,
+            rating
+          })
+        });
+      } catch (err) {
+        console.error('保存进度失败:', err);
+      }
+
+      currentVocabIndex++;
+      showVocabCard();
+      loadProgress();
+    }
+
+    // 阅读模块
+    function renderReading() {
+      const container = document.getElementById('readingContent');
+      const totalPages = Math.ceil(readingData.length / READING_PER_PAGE);
+      const start = currentReadingPage * READING_PER_PAGE;
+      const pageItems = readingData.slice(start, start + READING_PER_PAGE);
+
+      const html = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+          <span style="font-size:13px; color:var(--text-light);">共 ${readingData.length} 篇 · 第 ${currentReadingPage+1}/${totalPages} 页</span>
+          <div style="display:flex;gap:8px;">
+            <button onclick="changeReadingPage(-1)" ${currentReadingPage===0?'disabled':''} style="padding:6px 14px;border-radius:20px;border:1px solid #E2E8F0;background:${currentReadingPage===0?'#f0f0f0':'white'};cursor:${currentReadingPage===0?'not-allowed':'pointer'};font-size:13px;">上一页</button>
+            <button onclick="changeReadingPage(1)" ${currentReadingPage===totalPages-1?'disabled':''} style="padding:6px 14px;border-radius:20px;border:1px solid #E2E8F0;background:${currentReadingPage===totalPages-1?'#f0f0f0':'white'};cursor:${currentReadingPage===totalPages-1?'not-allowed':'pointer'};font-size:13px;">下一页</button>
+          </div>
+        </div>
+        ${pageItems.map((item, idx) => `
+          <div class="reading-section">
+            <div class="section-header">
+              <span style="background:var(--primary);color:white;font-size:11px;padding:3px 10px;border-radius:12px;font-weight:700;">${item.part}</span>
+              <span style="font-size:15px;font-weight:700;color:var(--text);margin-left:8px;">${item.title}</span>
+            </div>
+            <div class="reading-text">${item.text.replace(/\n/g, '<br>')}</div>
+            <div style="margin-top:16px;font-weight:600;">${item.question}</div>
+            <div style="margin-top:12px;">
+              ${item.options.map((opt, i) => `
+                <div class="reading-option" onclick="checkReadingAnswer(this, ${i}, ${item.answer})">
+                  ${String.fromCharCode(65+i)}. ${opt}
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `).join('')}
+        <div style="display:flex; justify-content:center; gap:8px; margin-top:16px;">
+          <button onclick="changeReadingPage(-1)" ${currentReadingPage===0?'disabled':''} style="padding:8px 24px;border-radius:20px;border:1px solid #E2E8F0;background:${currentReadingPage===0?'#f0f0f0':'white'};cursor:${currentReadingPage===0?'not-allowed':'pointer'};">◀ 上一页</button>
+          <button onclick="changeReadingPage(1)" ${currentReadingPage===totalPages-1?'disabled':''} style="padding:8px 24px;border-radius:20px;border:none;background:var(--primary);color:white;cursor:${currentReadingPage===totalPages-1?'not-allowed':'pointer'};">下一页 ▶</button>
+        </div>
+      `;
+      container.innerHTML = html;
+    }
+
+    function changeReadingPage(dir) {
+      const totalPages = Math.ceil(readingData.length / READING_PER_PAGE);
+      currentReadingPage = Math.max(0, Math.min(totalPages - 1, currentReadingPage + dir));
+      renderReading();
+      document.getElementById('readingPage').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function checkReadingAnswer(el, selected, correct) {
+      const parent = el.parentElement;
+      parent.querySelectorAll('.reading-option').forEach(opt => {
+        opt.classList.remove('selected');
+        if (parseInt(opt.onclick.toString().match(/\d+/)[2]) === correct) {
+          opt.classList.add('correct');
+        }
+      });
+
+      if (selected === correct) {
+        el.classList.add('selected');
+        showToast('✅ 正确！+10 XP');
+        saveProgress('reading', 10, true);
+      } else {
+        el.classList.add('wrong');
+        showToast('❌ 再想想');
+        saveProgress('reading', 0, false);
+      }
+    }
+
+    // 加载听力数据
+    async function loadListeningData() {
+      try {
+        console.log('开始加载听力数据...');
+        const response = await fetch('audio/listening_data.json');
+        console.log('响应状态:', response.status);
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+        listeningData = await response.json();
+        console.log('听力数据加载成功，共', listeningData.length, '条');
+      } catch (err) {
+        console.error('加载听力数据失败:', err);
+        listeningData = [];
+        // 显示错误信息给用户
+        setTimeout(() => {
+          const container = document.getElementById('listeningContent');
+          if (container) {
+            container.innerHTML = `
+              <div style="text-align: center; padding: 40px; color: #e74c3c;">
+                ❌ 数据加载失败<br>
+                <small style="color: #7f8c8d;">${err.message}</small><br>
+                <button onclick="window.location.reload()" style="margin-top: 20px; padding: 10px 20px; background: #3498db; color: white; border: none; border-radius: 8px; cursor: pointer;">刷新页面</button>
+              </div>
+            `;
+          }
+        }, 100);
+      }
+    }
+
+    // 听力模块
+    function renderListening() {
+      const container = document.getElementById('listeningContent');
+
+      if (listeningData.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 40px; color: var(--text-light);">
+            正在加载听力数据...<br>请稍后刷新页面
+          </div>
+        `;
+        return;
+      }
+
+      const totalPages = Math.ceil(listeningData.length / LISTENING_PER_PAGE);
+      const startIndex = currentListeningPage * LISTENING_PER_PAGE;
+      const endIndex = Math.min(startIndex + LISTENING_PER_PAGE, listeningData.length);
+      const currentPageData = listeningData.slice(startIndex, endIndex);
+
+      const html = currentPageData.map((item, displayIndex) => {
+        const actualIndex = startIndex + displayIndex;
+        return `
+        <div class="reading-section">
+          <div class="audio-player">
+            <button class="play-btn" onclick="playListening(this, ${actualIndex})">▶</button>
+            <div style="margin-top: 16px; font-weight: 600;">听力对话 ${actualIndex + 1}</div>
+            <audio id="audio${actualIndex}" src="audio/listening${actualIndex + 1}.mp3" preload="auto"></audio>
+          </div>
+          <div style="margin-top: 12px;"><strong>${item.question}</strong></div>
+          <div style="margin-top: 12px;">
+            ${item.options.map((opt, i) => `
+              <div class="reading-option" onclick="checkListeningAnswer(this, ${i}, ${item.answer})">
+                ${String.fromCharCode(65 + i)}. ${opt}
+              </div>
+            `).join('')}
+          </div>
+          <button class="toggle-script-btn" onclick="this.nextElementSibling.classList.toggle('show')">查看原文 ▼</button>
+          <div class="audio-script">${item.dialogue.replace(/\n/g, '<br>')}</div>
+        </div>
+      `}).join('');
+
+      const paginationHtml = `
+        <div class="pagination">
+          <button class="page-btn" onclick="changeListeningPage(-1)" ${currentListeningPage === 0 ? 'disabled' : ''}>
+            上一页
+          </button>
+          <span class="page-info">${currentListeningPage + 1} / ${totalPages}</span>
+          <button class="page-btn" onclick="changeListeningPage(1)" ${currentListeningPage >= totalPages - 1 ? 'disabled' : ''}>
+            下一页
+          </button>
+        </div>
+      `;
+
+      container.innerHTML = html + paginationHtml;
+    }
+
+    function changeListeningPage(delta) {
+      currentListeningPage += delta;
+      renderListening();
+      window.scrollTo(0, 0);
+    }
+
+    function playListening(btn, index) {
+      const audio = document.getElementById('audio' + index);
+
+      if (btn.textContent === '⏸') {
+        audio.pause();
+        btn.textContent = '▶';
+        return;
+      }
+
+      // 如果之前有其他音频在播放，先停止
+      document.querySelectorAll('audio').forEach(a => {
+        a.pause();
+        a.currentTime = 0;
+      });
+      document.querySelectorAll('.play-btn').forEach(b => b.textContent = '▶');
+
+      audio.play().then(() => {
+        btn.textContent = '⏸';
+        showToast('正在播放听力...');
+      }).catch(err => {
+        showToast('音频文件未找到');
+        console.error('播放失败:', err);
+      });
+
+      audio.onended = () => {
+        btn.textContent = '▶';
+      };
+    }
+
+    function checkListeningAnswer(el, selected, correct) {
+      const parent = el.parentElement;
+      parent.querySelectorAll('.reading-option').forEach(opt => {
+        opt.classList.remove('selected');
+        if (parseInt(opt.onclick.toString().match(/\d+/)[2]) === correct) {
+          opt.classList.add('correct');
+        }
+      });
+
+      if (selected === correct) {
+        el.classList.add('selected');
+        showToast('✅ 正确！+10 XP');
+        saveProgress('listening', 10, true);
+      } else {
+        el.classList.add('wrong');
+        showToast('❌ 再想想');
+        saveProgress('listening', 0, false);
+      }
+    }
+
+    // 写作模块
+    function renderWriting() {
+      const container = document.getElementById('writingContent');
+      const totalPages = Math.ceil(writingData.length / WRITING_PER_PAGE);
+      const start = currentWritingPage * WRITING_PER_PAGE;
+      const pageItems = writingData.slice(start, start + WRITING_PER_PAGE);
+
+      // 写作类型颜色
+      const typeColors = { '邮件': '#6C63FF', '便条': '#F7971E', '故事': '#43E97B', '描述': '#FF6584', '卡片': '#3498DB' };
+
+      const html = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+          <span style="font-size:13px; color:var(--text-light);">共 ${writingData.length} 套 · 第 ${currentWritingPage+1}/${totalPages} 页</span>
+          <div style="display:flex;gap:8px;">
+            <button onclick="changeWritingPage(-1)" ${currentWritingPage===0?'disabled':''} style="padding:6px 14px;border-radius:20px;border:1px solid #E2E8F0;background:${currentWritingPage===0?'#f0f0f0':'white'};cursor:${currentWritingPage===0?'not-allowed':'pointer'};font-size:13px;">上一页</button>
+            <button onclick="changeWritingPage(1)" ${currentWritingPage===totalPages-1?'disabled':''} style="padding:6px 14px;border-radius:20px;border:1px solid #E2E8F0;background:${currentWritingPage===totalPages-1?'#f0f0f0':'white'};cursor:${currentWritingPage===totalPages-1?'not-allowed':'pointer'};font-size:13px;">下一页</button>
+          </div>
+        </div>
+        ${pageItems.map((item, idx) => {
+          const globalIndex = start + idx;
+          const bgColor = typeColors[item.type] || '#6C63FF';
+          const tipsHtml = item.tips ? `
+            <div style="background:#F0F4FF;border-radius:10px;padding:10px 14px;margin:10px 0;">
+              <div style="font-size:12px;font-weight:700;color:var(--primary);margin-bottom:6px;">📝 写作要点：</div>
+              ${item.tips.map(t => `<div style="font-size:12px;color:var(--text);margin:2px 0;">· ${t}</div>`).join('')}
+            </div>
+          ` : '';
+          return `
+            <div class="reading-section">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+                <span style="background:${bgColor};color:white;font-size:11px;padding:4px 12px;border-radius:12px;font-weight:700;">${item.type}</span>
+                <span style="font-size:13px;color:var(--text-light);">练习 ${globalIndex+1}/${writingData.length}</span>
+              </div>
+              <div class="writing-prompt">
+                <strong>题目：</strong>${item.prompt}
+                <div style="font-size:12px;color:var(--text-light);margin-top:6px;">📏 要求：${item.wordMin} - ${item.wordMax} 词</div>
+              </div>
+              ${tipsHtml}
+              <textarea class="writing-area" id="writingArea${globalIndex}" oninput="updateWordCount(this, ${item.wordMin}, ${item.wordMax}, ${globalIndex})" placeholder="在这里开始写作..."></textarea>
+              <div class="word-count" id="wordCount${globalIndex}">0 词 / 要求 ${item.wordMin}-${item.wordMax} 词</div>
+              <button style="width:100%;padding:12px;background:var(--primary);color:white;border:none;border-radius:10px;font-weight:600;cursor:pointer;margin-top:12px;" onclick="submitWriting(${globalIndex})">提交 +15 XP</button>
+              <div class="reference-answer" id="reference${globalIndex}" style="display:none;">
+                <div class="reference-title">✅ 参考答案：</div>
+                <div style="white-space:pre-wrap;font-size:13px;line-height:1.7;">${writingData[globalIndex].reference}</div>
+              </div>
+            </div>
+          `;
+        }).join('')}
+        <div style="display:flex; justify-content:center; gap:8px; margin-top:16px;">
+          <button onclick="changeWritingPage(-1)" ${currentWritingPage===0?'disabled':''} style="padding:8px 24px;border-radius:20px;border:1px solid #E2E8F0;background:${currentWritingPage===0?'#f0f0f0':'white'};cursor:${currentWritingPage===0?'not-allowed':'pointer'};">◀ 上一页</button>
+          <button onclick="changeWritingPage(1)" ${currentWritingPage===totalPages-1?'disabled':''} style="padding:8px 24px;border-radius:20px;border:none;background:var(--primary);color:white;cursor:${currentWritingPage===totalPages-1?'not-allowed':'pointer'};">下一页 ▶</button>
+        </div>
+      `;
+      container.innerHTML = html;
+    }
+
+    function changeWritingPage(dir) {
+      const totalPages = Math.ceil(writingData.length / WRITING_PER_PAGE);
+      currentWritingPage = Math.max(0, Math.min(totalPages - 1, currentWritingPage + dir));
+      renderWriting();
+      document.getElementById('writingPage').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function updateWordCount(textarea, min, max, index) {
+      const words = textarea.value.trim().split(/\s+/).filter(w => w).length;
+      const countEl = document.getElementById('wordCount' + index);
+      const ok = words >= min && words <= max;
+      countEl.textContent = `${words} 词 / 要求 ${min}-${max} 词 ${ok ? '✅' : ''}`;
+      countEl.style.color = words === 0 ? '#718096' : (ok ? '#43A047' : '#F56565');
+    }
+
+    function submitWriting(index) {
+      const area = document.getElementById('writingArea' + index);
+      if (!area.value.trim()) {
+        showToast('请先填写内容');
+        return;
+      }
+      const refEl = document.getElementById('reference' + index);
+      refEl.style.display = 'block';
+      refEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      showToast('✅ 已提交！+15 XP');
+      saveProgress('writing', 15, true);
+    }
+
+    // 进度模块
+    async function loadProgress() {
+      try {
+        const res = await fetch(`${API_BASE}/api/user/${currentUser.id}/progress`);
+        const data = await res.json();
+        updateProgressUI(data);
+      } catch (err) {
+        console.error('加载进度失败:', err);
+      }
+    }
+
+    function updateProgressUI(progress) {
+      // 更新今日统计
+      document.getElementById('todayWords').textContent = progress.today_words || 0;
+      document.getElementById('todayXP').textContent = progress.today_xp || 0;
+      document.getElementById('todayAccuracy').textContent = progress.accuracy ? Math.round(progress.accuracy) + '%' : '0%';
+      document.getElementById('streakDisplay').textContent = `🔥 ${progress.streak || 0}天`;
+
+      // 更新总体进度
+      const overall = progress.overall || 0;
+      document.getElementById('overallProgress').textContent = overall + '%';
+      document.getElementById('progressFill').style.width = overall + '%';
+
+      // 更新技能进度
+      const skills = progress.skills || {};
+      updateSkillBar('vocab', skills.vocab || 0);
+      updateSkillBar('reading', skills.reading || 0);
+      updateSkillBar('listening', skills.listening || 0);
+      updateSkillBar('writing', skills.writing || 0);
+
+      // 更新最近活动
+      if (progress.recent && progress.recent.length > 0) {
+        const activitiesHtml = progress.recent.slice(0, 10).map(act => `
+          <div class="activity-item">
+            <div class="activity-icon">${getActivityIcon(act.type)}</div>
+            <div class="activity-info">
+              <div class="activity-text">${act.text}</div>
+              <div class="activity-time">${act.time}</div>
+            </div>
+            <div class="activity-xp">+${act.xp} XP</div>
+          </div>
+        `).join('');
+        document.getElementById('recentActivities').innerHTML = activitiesHtml;
+      }
+    }
+
+    function updateSkillBar(skill, percent) {
+      document.getElementById(skill + 'SkillBar').style.width = percent + '%';
+      document.getElementById(skill + 'SkillPercent').textContent = percent + '%';
+    }
+
+    function getActivityIcon(type) {
+      const icons = {
+        'vocab': '🔤',
+        'reading': '📖',
+        'listening': '🎧',
+        'writing': '✍️'
+      };
+      return icons[type] || '⭐';
+    }
+
+    async function saveProgress(type, xp, correct) {
+      try {
+        await fetch(`${API_BASE}/api/${type}-progress`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            user_id: currentUser.id,
+            xp,
+            correct
+          })
+        });
+        loadProgress();
+      } catch (err) {
+        console.error('保存进度失败:', err);
+      }
+    }
+  </script>
+</body>
+</html>

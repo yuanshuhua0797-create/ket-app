@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>登录 - KET备考APP</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', 'PingFang SC', system-ui, sans-serif;
+      background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .container {
+      background: white;
+      border-radius: 24px;
+      padding: 40px 32px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    }
+    .logo {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .logo-emoji { font-size: 48px; margin-bottom: 8px; }
+    .logo-title {
+      font-size: 24px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #6C63FF, #764BA2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .logo-subtitle {
+      font-size: 13px;
+      color: #718096;
+      margin-top: 4px;
+    }
+    .tabs {
+      display: flex;
+      background: #F7FAFC;
+      border-radius: 12px;
+      padding: 4px;
+      margin-bottom: 24px;
+    }
+    .tab {
+      flex: 1;
+      padding: 12px;
+      text-align: center;
+      cursor: pointer;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #718096;
+      transition: all 0.2s;
+    }
+    .tab.active {
+      background: white;
+      color: #6C63FF;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .form-group { margin-bottom: 16px; }
+    .form-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #2D3748;
+      margin-bottom: 6px;
+    }
+    .form-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #E2E8F0;
+      border-radius: 10px;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-input:focus {
+      border-color: #6C63FF;
+    }
+    .btn-primary {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #6C63FF, #764BA2);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s;
+      margin-top: 8px;
+    }
+    .btn-primary:hover { opacity: 0.92; }
+    .btn-primary:active { transform: scale(0.98); }
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .avatar-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .avatar-item {
+      font-size: 28px;
+      padding: 8px;
+      border-radius: 10px;
+      border: 2px solid #E2E8F0;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .avatar-item:hover {
+      border-color: #6C63FF;
+      transform: scale(1.1);
+    }
+    .avatar-item.selected {
+      border-color: #6C63FF;
+      background: #F8F7FF;
+      transform: scale(1.1);
+    }
+    .error-msg {
+      color: #E53E3E;
+      font-size: 13px;
+      margin-top: 8px;
+      display: none;
+    }
+    .error-msg.show { display: block; }
+    .success-msg {
+      color: #38A169;
+      font-size: 13px;
+      margin-top: 8px;
+      display: none;
+    }
+    .success-msg.show { display: block; }
+    .footer {
+      text-align: center;
+      font-size: 12px;
+      color: #A0AEC0;
+      margin-top: 24px;
+    }
+    @media (max-width: 480px) {
+      .container {
+        padding: 32px 24px;
+        border-radius: 20px 20px 0 0;
+        margin: auto 0 0;
+      }
+      body { align-items: flex-end; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">
+      <div class="logo-emoji">📚</div>
+      <div class="logo-title">KET 备考助手</div>
+      <div class="logo-subtitle">为袁文宣打造的英语学习伙伴</div>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" id="loginTab" onclick="switchTab('login')">登录</div>
+      <div class="tab" id="registerTab" onclick="switchTab('register')">注册</div>
+    </div>
+
+    <!-- Login Form -->
+    <div id="loginForm">
+      <div class="form-group">
+        <label class="form-label">邮箱</label>
+        <input type="email" class="form-input" id="loginEmail" placeholder="your@email.com" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">密码</label>
+        <input type="password" class="form-input" id="loginPassword" placeholder="输入密码" />
+      </div>
+      <button class="btn-primary" id="loginBtn" onclick="handleLogin()">登录</button>
+      <div class="error-msg" id="loginError"></div>
+    </div>
+
+    <!-- Register Form -->
+    <div id="registerForm" style="display: none;">
+      <div class="form-group">
+        <label class="form-label">用户名</label>
+        <input type="text" class="form-input" id="regUsername" placeholder="你的昵称" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">邮箱</label>
+        <input type="email" class="form-input" id="regEmail" placeholder="your@email.com" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">密码（至少6位）</label>
+        <input type="password" class="form-input" id="regPassword" placeholder="设置密码" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">选择头像</label>
+        <div class="avatar-grid" id="avatarGrid"></div>
+      </div>
+      <button class="btn-primary" id="regBtn" onclick="handleRegister()">注册</button>
+      <div class="error-msg" id="regError"></div>
+      <div class="success-msg" id="regSuccess"></div>
+    </div>
+
+    <div class="footer">© 2026 KET 备考助手</div>
+  </div>
+
+  <script>
+    const API_BASE = 'http://127.0.0.1:3001';
+    const avatars = ['😊', '😄', '🎯', '🚀', '⭐', '🔥', '📖', '💪', '🌟', '🎉', '🏆', '💡'];
+    let selectedAvatar = '😊';
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      initAvatars();
+      checkLoggedIn();
+    });
+
+    function initAvatars() {
+      const grid = document.getElementById('avatarGrid');
+      grid.innerHTML = avatars.map(emoji => `
+        <div class="avatar-item ${emoji === selectedAvatar ? 'selected' : ''}" 
+             onclick="selectAvatar('${emoji}')">${emoji}</div>
+      `).join('');
+    }
+
+    function selectAvatar(emoji) {
+      selectedAvatar = emoji;
+      initAvatars();
+    }
+
+    function switchTab(tab) {
+      document.getElementById('loginTab').classList.toggle('active', tab === 'login');
+      document.getElementById('registerTab').classList.toggle('active', tab === 'register');
+      document.getElementById('loginForm').style.display = tab === 'login' ? 'block' : 'none';
+      document.getElementById('registerForm').style.display = tab === 'register' ? 'block' : 'none';
+      hideErrors();
+    }
+
+    function hideErrors() {
+      document.querySelectorAll('.error-msg, .success-msg').forEach(el => el.classList.remove('show'));
+    }
+
+    function showError(id, msg) {
+      const el = document.getElementById(id);
+      el.textContent = msg;
+      el.classList.add('show');
+    }
+
+    function showSuccess(id, msg) {
+      const el = document.getElementById(id);
+      el.textContent = msg;
+      el.classList.add('show');
+    }
+
+    async function handleRegister() {
+      const username = document.getElementById('regUsername').value.trim();
+      const email = document.getElementById('regEmail').value.trim();
+      const password = document.getElementById('regPassword').value;
+      const btn = document.getElementById('regBtn');
+
+      if (!username || !email || !password) {
+        showError('regError', '请填写所有字段');
+        return;
+      }
+
+      if (password.length < 6) {
+        showError('regError', '密码至少需要6位');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = '注册中...';
+
+      try {
+        const res = await fetch(`${API_BASE}/api/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, email, password, avatarEmoji: selectedAvatar })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          showSuccess('regSuccess', '注册成功！正在登录...');
+          setTimeout(() => handleLoginWithEmail(email, password), 1000);
+        } else {
+          showError('regError', data.error || '注册失败');
+        }
+      } catch (err) {
+        showError('regError', '网络错误，请检查后端是否启动');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '注册';
+      }
+    }
+
+    async function handleLogin() {
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      const btn = document.getElementById('loginBtn');
+
+      if (!email || !password) {
+        showError('loginError', '请填写邮箱和密码');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = '登录中...';
+
+      try {
+        const res = await fetch(`${API_BASE}/api/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          localStorage.setItem('ketUser', JSON.stringify(data.user));
+          window.location.href = 'app.html';
+        } else {
+          showError('loginError', data.error || '登录失败');
+        }
+      } catch (err) {
+        showError('loginError', '网络错误，请检查后端是否启动');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '登录';
+      }
+    }
+
+    async function handleLoginWithEmail(email, password) {
+      try {
+        const res = await fetch(`${API_BASE}/api/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          localStorage.setItem('ketUser', JSON.stringify(data.user));
+          window.location.href = 'app.html';
+        } else {
+          showError('regError', data.error || '登录失败');
+        }
+      } catch (err) {
+        showError('regError', '自动登录失败');
+      }
+    }
+
+    function checkLoggedIn() {
+      const user = localStorage.getItem('ketUser');
+      if (user) {
+        window.location.href = 'app.html';
+      }
+    }
+  </script>
+</body>
+</html>
