@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KET 管理后台</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; }
+
+    .login-screen {
+      display: flex; justify-content: center; align-items: center; height: 100vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    .login-box { background: white; padding: 40px; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); text-align: center; }
+    .login-box h1 { color: #333; margin-bottom: 8px; font-size: 24px; }
+    .login-box p { color: #666; margin-bottom: 24px; font-size: 14px; }
+    .login-box input { width: 100%; padding: 14px; border: 2px solid #ddd; border-radius: 10px; font-size: 16px; margin-bottom: 16px; outline: none; transition: border-color 0.3s; }
+    .login-box input:focus { border-color: #667eea; }
+    .login-box button { width: 100%; padding: 14px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; transition: transform 0.2s; }
+    .login-box button:hover { transform: translateY(-2px); }
+    .login-error { color: #e74c3c; font-size: 14px; margin-top: 12px; display: none; }
+
+    .admin-screen { display: none; }
+    .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; }
+    .header h1 { font-size: 20px; }
+    .logout-btn { background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; }
+    .logout-btn:hover { background: rgba(255,255,255,0.3); }
+
+    .tabs { background: white; display: flex; border-bottom: 1px solid #eee; }
+    .tab { flex: 1; padding: 14px; text-align: center; cursor: pointer; font-size: 14px; font-weight: 500; color: #666; border-bottom: 3px solid transparent; transition: all 0.3s; }
+    .tab:hover { color: #667eea; }
+    .tab.active { color: #667eea; border-bottom-color: #667eea; }
+
+    .content { padding: 20px; max-width: 1200px; margin: 0 auto; }
+
+    .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .toolbar h2 { font-size: 18px; color: #333; }
+    .add-btn { background: #27ae60; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500; }
+    .add-btn:hover { background: #219a52; }
+
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+    .stat-card { background: white; padding: 16px; border-radius: 12px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    .stat-card .num { font-size: 28px; font-weight: 700; color: #667eea; }
+    .stat-card .label { font-size: 12px; color: #999; margin-top: 4px; }
+
+    .list { display: flex; flex-direction: column; gap: 12px; }
+    .item { background: white; border-radius: 12px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); display: flex; justify-content: space-between; align-items: flex-start; }
+    .item-info { flex: 1; }
+    .item-title { font-size: 15px; font-weight: 600; color: #333; margin-bottom: 4px; }
+    .item-meta { font-size: 12px; color: #999; }
+    .item-preview { font-size: 13px; color: #666; margin-top: 6px; line-height: 1.4; }
+    .item-actions { display: flex; gap: 8px; }
+    .edit-btn, .del-btn { padding: 6px 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 500; }
+    .edit-btn { background: #3498db; color: white; }
+    .edit-btn:hover { background: #2980b9; }
+    .del-btn { background: #e74c3c; color: white; }
+    .del-btn:hover { background: #c0392b; }
+
+    .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000; }
+    .modal.show { display: flex; }
+    .modal-box { background: white; border-radius: 16px; padding: 24px; width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .modal-header h3 { font-size: 18px; color: #333; }
+    .modal-close { background: none; border: none; font-size: 24px; color: #999; cursor: pointer; }
+    .modal-close:hover { color: #333; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 13px; color: #666; margin-bottom: 6px; font-weight: 500; }
+    .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px; outline: none; transition: border-color 0.3s; }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: #667eea; }
+    .form-group textarea { resize: vertical; min-height: 80px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .form-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+    .save-btn { background: #667eea; color: white; border: none; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500; }
+    .cancel-btn { background: #e0e0e0; color: #666; border: none; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500; }
+
+    .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 12px 24px; border-radius: 8px; font-size: 14px; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 2000; }
+    .toast.show { opacity: 1; }
+
+    .empty { text-align: center; padding: 40px; color: #999; font-size: 14px; }
+    .loading { text-align: center; padding: 40px; color: #999; font-size: 14px; }
+  </style>
+</head>
+<body>
+
+<!-- 登录页面 -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <h1>KET 管理后台</h1>
+    <p>输入管理员密码进入</p>
+    <input type="password" id="passwordInput" placeholder="请输入管理员密码" onkeypress="if(event.key==='Enter')login()">
+    <button onclick="login()">进入后台</button>
+    <p class="login-error" id="loginError">密码错误，请重试</p>
+  </div>
+</div>
+
+<!-- 管理后台 -->
+<div class="admin-screen" id="adminScreen">
+  <div class="header">
+    <h1>KET 管理后台</h1>
+    <button class="logout-btn" onclick="logout()">退出</button>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" data-tab="vocab" onclick="switchTab('vocab')">📚 词汇</div>
+    <div class="tab" data-tab="reading" onclick="switchTab('reading')">📖 阅读</div>
+    <div class="tab" data-tab="writing" onclick="switchTab('writing')">✏️ 写作</div>
+    <div class="tab" data-tab="listening" onclick="switchTab('listening')">👂 听力</div>
+  </div>
+
+  <div class="content">
+    <!-- 统计 -->
+    <div class="stats">
+      <div class="stat-card"><div class="num" id="vocabCount">-</div><div class="label">词汇数量</div></div>
+      <div class="stat-card"><div class="num" id="readingCount">-</div><div class="label">阅读篇数</div></div>
+      <div class="stat-card"><div class="num" id="writingCount">-</div><div class="label">写作题数</div></div>
+      <div class="stat-card"><div class="num" id="listeningCount">-</div><div class="label">听力量</div></div>
+    </div>
+
+    <!-- 词汇列表 -->
+    <div class="tab-content" id="vocabContent">
+      <div class="toolbar"><h2>词汇管理</h2><button class="add-btn" onclick="showAddModal('vocab')">+ 添加词汇</button></div>
+      <div class="list" id="vocabList"><div class="loading">加载中...</div></div>
+    </div>
+
+    <!-- 阅读列表 -->
+    <div class="tab-content" id="readingContent" style="display:none">
+      <div class="toolbar"><h2>阅读管理</h2><button class="add-btn" onclick="showAddModal('reading')">+ 添加文章</button></div>
+      <div class="list" id="readingList"><div class="loading">加载中...</div></div>
+    </div>
+
+    <!-- 写作列表 -->
+    <div class="tab-content" id="writingContent" style="display:none">
+      <div class="toolbar"><h2>写作管理</h2><button class="add-btn" onclick="showAddModal('writing')">+ 添加题目</button></div>
+      <div class="list" id="writingList"><div class="loading">加载中...</div></div>
+    </div>
+
+    <!-- 听力列表 -->
+    <div class="tab-content" id="listeningContent" style="display:none">
+      <div class="toolbar"><h2>听力管理</h2><button class="add-btn" onclick="showAddModal('listening')">+ 添加听力</button></div>
+      <div class="list" id="listeningList"><div class="loading">加载中...</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- 模态框 -->
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <div class="modal-header"><h3 id="modalTitle">添加</h3><button class="modal-close" onclick="closeModal()">&times;</button></div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+const API_BASE = 'https://ket-app-backend.onrender.com';
+let adminPassword = '';
+let currentTab = 'vocab';
+let editingId = null;
+let currentData = [];
+
+function login() {
+  const pw = document.getElementById('passwordInput').value;
+  if (!pw) return;
+  fetch(`${API_BASE}/api/admin/verify`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ password: pw })
+  }).then(r => r.json()).then(res => {
+    if (res.success) {
+      adminPassword = pw;
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('adminScreen').style.display = 'block';
+      loadAll();
+    } else {
+      document.getElementById('loginError').style.display = 'block';
+    }
+  }).catch(() => {
+    document.getElementById('loginError').style.display = 'block';
+  });
+}
+
+function logout() {
+  adminPassword = '';
+  document.getElementById('adminScreen').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('passwordInput').value = '';
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelector(`.tab[data-tab="${tab}"]`).classList.add('active');
+  document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+  document.getElementById(`${tab}Content`).style.display = 'block';
+}
+
+async function loadAll() {
+  await Promise.all([loadVocab(), loadReading(), loadWriting(), loadListening()]);
+}
+
+async function loadVocab() {
+  const res = await fetch(`${API_BASE}/api/admin/vocab`, { headers: { 'X-Admin-Password': adminPassword } });
+  const json = await res.json();
+  if (json.success) {
+    currentData = json.data;
+    document.getElementById('vocabCount').textContent = json.data.length;
+    renderVocabList(json.data);
+  }
+}
+
+async function loadReading() {
+  const res = await fetch(`${API_BASE}/api/admin/reading`, { headers: { 'X-Admin-Password': adminPassword } });
+  const json = await res.json();
+  if (json.success) {
+    document.getElementById('readingCount').textContent = json.data.length;
+    renderReadingList(json.data);
+  }
+}
+
+async function loadWriting() {
+  const res = await fetch(`${API_BASE}/api/admin/writing`, { headers: { 'X-Admin-Password': adminPassword } });
+  const json = await res.json();
+  if (json.success) {
+    document.getElementById('writingCount').textContent = json.data.length;
+    renderWritingList(json.data);
+  }
+}
+
+async function loadListening() {
+  const res = await fetch(`${API_BASE}/api/admin/listening`, { headers: { 'X-Admin-Password': adminPassword } });
+  const json = await res.json();
+  if (json.success) {
+    document.getElementById('listeningCount').textContent = json.data.length;
+    renderListeningList(json.data);
+  }
+}
+
+function renderVocabList(data) {
+  const list = document.getElementById('vocabList');
+  if (!data.length) { list.innerHTML = '<div class="empty">暂无词汇，点击上方按钮添加</div>'; return; }
+  list.innerHTML = data.map(item => `
+    <div class="item">
+      <div class="item-info">
+        <div class="item-title">${item.word} ${item.phonetic || ''}</div>
+        <div class="item-meta">分类: ${item.category} | 翻译: ${item.translation}</div>
+        <div class="item-preview">例句: ${item.example || '无'}</div>
+      </div>
+      <div class="item-actions">
+        <button class="edit-btn" onclick="editVocab(${item.id})">编辑</button>
+        <button class="del-btn" onclick="deleteVocab(${item.id})">删除</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderReadingList(data) {
+  const list = document.getElementById('readingList');
+  if (!data.length) { list.innerHTML = '<div class="empty">暂无文章，点击上方按钮添加</div>'; return; }
+  list.innerHTML = data.map(item => `
+    <div class="item">
+      <div class="item-info">
+        <div class="item-title">${item.title} <span style="color:#667eea;font-size:12px">[${item.part}]</span></div>
+        <div class="item-meta">答案选项: ${item.answer}</div>
+        <div class="item-preview">${item.text.substring(0, 80)}...</div>
+      </div>
+      <div class="item-actions">
+        <button class="edit-btn" onclick="editReading(${item.id})">编辑</button>
+        <button class="del-btn" onclick="deleteReading(${item.id})">删除</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderWritingList(data) {
+  const list = document.getElementById('writingList');
+  if (!data.length) { list.innerHTML = '<div class="empty">暂无题目，点击上方按钮添加</div>'; return; }
+  list.innerHTML = data.map(item => `
+    <div class="item">
+      <div class="item-info">
+        <div class="item-title">${item.type}</div>
+        <div class="item-meta">字数要求: ${item.word_min}-${item.word_max}词</div>
+        <div class="item-preview">${item.prompt.substring(0, 80)}...</div>
+      </div>
+      <div class="item-actions">
+        <button class="edit-btn" onclick="editWriting(${item.id})">编辑</button>
+        <button class="del-btn" onclick="deleteWriting(${item.id})">删除</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderListeningList(data) {
+  const list = document.getElementById('listeningList');
+  if (!data.length) { list.innerHTML = '<div class="empty">暂无听力，点击上方按钮添加</div>'; return; }
+  list.innerHTML = data.map(item => `
+    <div class="item">
+      <div class="item-info">
+        <div class="item-title">听力 #${item.id}</div>
+        <div class="item-meta">音频: ${item.audio_file || '无'} | 答案: ${item.answer}</div>
+        <div class="item-preview">${item.dialogue.substring(0, 80)}...</div>
+      </div>
+      <div class="item-actions">
+        <button class="edit-btn" onclick="editListening(${item.id})">编辑</button>
+        <button class="del-btn" onclick="deleteListening(${item.id})">删除</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ========== Vocab CRUD ==========
+function showAddModal(type) {
+  editingId = null;
+  if (type === 'vocab') showVocabForm();
+  else if (type === 'reading') showReadingForm();
+  else if (type === 'writing') showWritingForm();
+  else if (type === 'listening') showListeningForm();
+}
+
+async function editVocab(id) {
+  const res = await fetch(`${API_BASE}/api/admin/vocab`, { headers: { 'X-Admin-Password': adminPassword } });
+  const json = await res.json();
+  if (json.success) {
+    const item = json.data.find(i => i.id === id);
+    if (item) { editingId = id; showVocabForm(item); }
+  }
+}
+
+function showVocabForm(item = {}) {
+  document.getElementById('modalTitle').textContent = editingId ? '编辑词汇' : '添加词汇';
+  document.getElementById('modalBody').innerHTML = `
+    <div class="form-group"><label>单词</label><input type="text" id="fWord" value="${item.word || ''}" placeholder="如: apple"></div>
+    <div class="form-group"><label>音标</label><input type="text" id="fPhonetic" value="${item.phonetic || ''}" placeholder="如: /ˈæpəl/"></div>
+    <div class="form-group"><label>中文翻译</label><input type="text" id="fTranslation" value="${item.translation || ''}" placeholder="如: 苹果"></div>
+    <div class="form-group"><label>例句</label><textarea id="fExample" placeholder="如: I eat an apple every day.">${item.example || ''}</textarea></div>
+    <div class="form-group"><label>分类</label>
+      <select id="fCategory">
+        <option value="日常" ${item.category==='日常'?'selected':''}>日常</option>
+        <option value="学校" ${item.category==='学校'?'selected':''}>学校</option>
+        <option value="旅行" ${item.category==='旅行'?'selected':''}>旅行</option>
+        <option value="食物" ${item.category==='食物'?'selected':''}>食物</option>
+        <option value="身体" ${item.category==='身体'?'selected':''}>身体</option>
+        <option value="购物" ${item.category==='购物'?'selected':''}>购物</option>
+        <option value="职业" ${item.category==='职业'?'selected':''}>职业</option>
+        <option value="家庭" ${item.category==='家庭'?'selected':''}>家庭</option>
+      </select>
+    </div>
+    <div class="form-actions">
+      <button class="cancel-btn" onclick="closeModal()">取消</button>
+      <button class="save-btn" onclick="saveVocab()">保存</button>
+    </div>
+  `;
+  document.getElementById('modal').classList.add('show');
+}
+
+async function saveVocab() {
+  const data = {
+    word: document.getElementById('fWord').value.trim(),
+    phonetic: document.getElementById('fPhonetic').value.trim(),
+    translation: document.getElementById('fTranslation').value.trim(),
+    example: document.getElementById('fExample').value.trim(),
+    category: document.getElementById('fCategory').value
+  };
+  if (!data.word || !data.translation) { toast('请填写必填项'); return; }
+  const method = editingId ? 'PUT' : 'POST';
+  const url = editingId ? `${API_BASE}/api/admin/vocab/${editingId}` : `${API_BASE}/api/admin/vocab`;
+  await fetch(url, { method, headers: { 'Content-Type': 'application/json', 'X-Admin-Password': adminPassword }, body: JSON.stringify(data) });
+  closeModal();
+  loadVocab();
+  toast(editingId ? '修改成功' : '添加成功');
+  editingId = null;
+}
+
+async function deleteVocab(id) {
+  if (!confirm('确定删除这条词汇吗？')) return;
+  await fetch(`${API_BASE}/api/admin/vocab/${id}`, { method: 'DELETE', headers: { 'X-Admin-Password': adminPassword } });
+  loadVocab();
+  toast('删除成功');
+}
+
+// ========== Reading CRUD ==========
+async function editReading(id) {
+  const res = await fetch(`${API_BASE}/api/admin/reading`, { headers: { 'X-Admin-Password': adminPassword } });
+  const json = await res.json();
+  if (json.success) {
+    const item = json.data.find(i => i.id === id);
+    if (item) { editingId = id; showReadingForm(item); }
+  }
+}
+
+function showReadingForm(item = {}) {
+  const opts = item.options ? item.options.join('\n') : '';
+  document.getElementById('modalTitle').textContent = editingId ? '编辑文章' : '添加文章';
+  document.getElementById('modalBody').innerHTML = `
+    <div class="form-group"><label>Part类型</label>
+      <select id="fPart">
+        <option value="Part 1" ${item.part==='Part 1'?'selected':''}>Part 1</option>
+        <option value="Part 2" ${item.part==='Part 2'?'selected':''}>Part 2</option>
+        <option value="Part 3" ${item.part==='Part 3'?'selected':''}>Part 3</option>
+        <option value="Part 4" ${item.part==='Part 4'?'selected':''}>Part 4</option>
+        <option value="Part 5" ${item.part==='Part 5'?'selected':''}>Part 5</option>
+      </select>
+    </div>
+    <div class="form-group"><label>标题</label><input type="text" id="fTitle" value="${item.title || ''}"></div>
+    <div class="form-group"><label>文章内容</label><textarea id="fText" style="min-height:120px">${item.text || ''}</textarea></div>
+    <div class="form-group"><label>问题</label><input type="text" id="fQuestion" value="${item.question || ''}"></div>
+    <div class="form-group"><label>选项（每行一个，共4行）</label><textarea id="fOptions" placeholder="选项A&#10;选项B&#10;选项C&#10;选项D" style="min-height:100px">${opts}</textarea></div>
+    <div class="form-group"><label>正确答案（0=A, 1=B, 2=C, 3=D）</label><input type="number" id="fAnswer" value="${item.answer || 0}" min="0" max="3"></div>
+    <div class="form-actions">
+      <button class="cancel-btn" onclick="closeModal()">取消</button>
+      <button class="save-btn" onclick="saveReading()">保存</button>
+    </div>
+  `;
+  document.getElementById('modal').classList.add('show');
+}
+
+async function saveReading() {
+  const optionsRaw = document.getElementById('fOptions').value.trim().split('\n');
+  const data = {
+    part: document.getElementById('fPart').value,
+    title: document.getElementById('fTitle').value.trim(),
+    text: document.getElementById('fText').value.trim(),
+    question: document.getElementById('fQuestion').value.trim(),
+    options: optionsRaw.filter(o => o.trim()),
+    answer: parseInt(document.getElementById('fAnswer').value)
+  };
+  if (!data.title || !data.text || !data.question) { toast('请填写必填项'); return; }
+  const method = editingId ? 'PUT' : 'POST';
+  const url = editingId ? `${API_BASE}/api/admin/reading/${editingId}` : `${API_BASE}/api/admin/reading`;
+  await fetch(url, { method, headers: { 'Content-Type': 'application/json', 'X-Admin-Password': adminPassword }, body: JSON.stringify(data) });
+  closeModal();
+  loadReading();
+  toast(editingId ? '修改成功' : '添加成功');
+  editingId = null;
+}
+
+async function deleteReading(id) {
+  if (!confirm('确定删除这篇阅读吗？')) return;
+  await fetch(`${API_BASE}/api/admin/reading/${id}`, { method: 'DELETE', headers: { 'X-Admin-Password': adminPassword } });
+  loadReading();
+  toast('删除成功');
+}
+
+// ========== Writing CRUD ==========
+async function editWriting(id) {
+  const res = await fetch(`${API_BASE}/api/admin/writing`, { headers: { 'X-Admin-Password': adminPassword } });
+  const json = await res.json();
+  if (json.success) {
+    const item = json.data.find(i => i.id === id);
+    if (item) { editingId = id; showWritingForm(item); }
+  }
+}
+
+function showWritingForm(item = {}) {
+  const tips = Array.isArray(item.tips) ? item.tips.join('\n') : '';
+  document.getElementById('modalTitle').textContent = editingId ? '编辑题目' : '添加题目';
+  document.getElementById('modalBody').innerHTML = `
+    <div class="form-group"><label>题目类型</label>
+      <select id="fType">
+        <option value="邮件" ${item.type==='邮件'?'selected':''}>邮件</option>
+        <option value="便条" ${item.type==='便条'?'selected':''}>便条</option>
+        <option value="故事" ${item.type==='故事'?'selected':''}>故事</option>
+        <option value="描述" ${item.type==='描述'?'selected':''}>描述</option>
+        <option value="卡片" ${item.type==='卡片'?'selected':''}>卡片</option>
+      </select>
+    </div>
+    <div class="form-group"><label>题目要求</label><textarea id="fPrompt" style="min-height:80px">${item.prompt || ''}</textarea></div>
+    <div class="form-row">
+      <div class="form-group"><label>最少词数</label><input type="number" id="fWordMin" value="${item.word_min || 25}"></div>
+      <div class="form-group"><label>最多词数</label><input type="number" id="fWordMax" value="${item.word_max || 40}"></div>
+    </div>
+    <div class="form-group"><label>写作要点提示（每行一个）</label><textarea id="fTips" placeholder="提示1&#10;提示2&#10;提示3" style="min-height:80px">${tips}</textarea></div>
+    <div class="form-group"><label>参考范文（可选）</label><textarea id="fReference" style="min-height:100px">${item.reference || ''}</textarea></div>
+    <div class="form-actions">
+      <button class="cancel-btn" onclick="closeModal()">取消</button>
+      <button class="save-btn" onclick="saveWriting()">保存</button>
+    </div>
+  `;
+  document.getElementById('modal').classList.add('show');
+}
+
+async function saveWriting() {
+  const tipsRaw = document.getElementById('fTips').value.trim().split('\n');
+  const data = {
+    type: document.getElementById('fType').value,
+    prompt: document.getElementById('fPrompt').value.trim(),
+    word_min: parseInt(document.getElementById('fWordMin').value) || 25,
+    word_max: parseInt(document.getElementById('fWordMax').value) || 40,
+    tips: tipsRaw.filter(t => t.trim()),
+    reference: document.getElementById('fReference').value.trim()
+  };
+  if (!data.prompt) { toast('请填写题目要求'); return; }
+  const method = editingId ? 'PUT' : 'POST';
+  const url = editingId ? `${API_BASE}/api/admin/writing/${editingId}` : `${API_BASE}/api/admin/writing`;
+  await fetch(url, { method, headers: { 'Content-Type': 'application/json', 'X-Admin-Password': adminPassword }, body: JSON.stringify(data) });
+  closeModal();
+  loadWriting();
+  toast(editingId ? '修改成功' : '添加成功');
+  editingId = null;
+}
+
+async function deleteWriting(id) {
+  if (!confirm('确定删除这道写作题吗？')) return;
+  await fetch(`${API_BASE}/api/admin/writing/${id}`, { method: 'DELETE', headers: { 'X-Admin-Password': adminPassword } });
+  loadWriting();
+  toast('删除成功');
+}
+
+// ========== Listening CRUD ==========
+async function editListening(id) {
+  const res = await fetch(`${API_BASE}/api/admin/listening`, { headers: { 'X-Admin-Password': adminPassword } });
+  const json = await res.json();
+  if (json.success) {
+    const item = json.data.find(i => i.id === id);
+    if (item) { editingId = id; showListeningForm(item); }
+  }
+}
+
+function showListeningForm(item = {}) {
+  const opts = item.options ? item.options.join('\n') : '';
+  document.getElementById('modalTitle').textContent = editingId ? '编辑听力' : '添加听力';
+  document.getElementById('modalBody').innerHTML = `
+    <div class="form-group"><label>对话内容</label><textarea id="fDialogue" style="min-height:100px">${item.dialogue || ''}</textarea></div>
+    <div class="form-group"><label>音频文件路径</label><input type="text" id="fAudioFile" value="${item.audio_file || ''}" placeholder="如: audio/listening101.mp3"></div>
+    <div class="form-group"><label>问题</label><input type="text" id="fQuestion2" value="${item.question || ''}"></div>
+    <div class="form-group"><label>选项（每行一个，共4行）</label><textarea id="fOptions2" placeholder="选项A&#10;选项B&#10;选项C&#10;选项D" style="min-height:100px">${opts}</textarea></div>
+    <div class="form-group"><label>正确答案（0=A, 1=B, 2=C, 3=D）</label><input type="number" id="fAnswer2" value="${item.answer || 0}" min="0" max="3"></div>
+    <div class="form-actions">
+      <button class="cancel-btn" onclick="closeModal()">取消</button>
+      <button class="save-btn" onclick="saveListening()">保存</button>
+    </div>
+  `;
+  document.getElementById('modal').classList.add('show');
+}
+
+async function saveListening() {
+  const optionsRaw = document.getElementById('fOptions2').value.trim().split('\n');
+  const data = {
+    dialogue: document.getElementById('fDialogue').value.trim(),
+    audio_file: document.getElementById('fAudioFile').value.trim(),
+    question: document.getElementById('fQuestion2').value.trim(),
+    options: optionsRaw.filter(o => o.trim()),
+    answer: parseInt(document.getElementById('fAnswer2').value)
+  };
+  if (!data.dialogue || !data.question) { toast('请填写必填项'); return; }
+  const method = editingId ? 'PUT' : 'POST';
+  const url = editingId ? `${API_BASE}/api/admin/listening/${editingId}` : `${API_BASE}/api/admin/listening`;
+  await fetch(url, { method, headers: { 'Content-Type': 'application/json', 'X-Admin-Password': adminPassword }, body: JSON.stringify(data) });
+  closeModal();
+  loadListening();
+  toast(editingId ? '修改成功' : '添加成功');
+  editingId = null;
+}
+
+async function deleteListening(id) {
+  if (!confirm('确定删除这条听力吗？')) return;
+  await fetch(`${API_BASE}/api/admin/listening/${id}`, { method: 'DELETE', headers: { 'X-Admin-Password': adminPassword } });
+  loadListening();
+  toast('删除成功');
+}
+
+// ========== Utils ==========
+function closeModal() {
+  document.getElementById('modal').classList.remove('show');
+  editingId = null;
+}
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+// 检查是否已登录
+if (sessionStorage.getItem('ket_admin_pw')) {
+  adminPassword = sessionStorage.getItem('ket_admin_pw');
+  fetch(`${API_BASE}/api/admin/verify`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ password: adminPassword })
+  }).then(r => r.json()).then(res => {
+    if (res.success) {
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('adminScreen').style.display = 'block';
+      loadAll();
+    } else {
+      sessionStorage.removeItem('ket_admin_pw');
+    }
+  });
+}
+</script>
+</body>
+</html>

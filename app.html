@@ -973,9 +973,41 @@
       }
     ];
 
+    // ========== 数据加载函数（从后端API）==========
+    async function loadVocabData() {
+      try {
+        const res = await fetch(`${API_BASE}/api/vocab`);
+        const json = await res.json();
+        if (json.success) vocabData = json.data;
+      } catch (e) {
+        console.error('加载词汇数据失败', e);
+      }
+    }
+
+    async function loadReadingData() {
+      try {
+        const res = await fetch(`${API_BASE}/api/reading`);
+        const json = await res.json();
+        if (json.success) readingData = json.data;
+      } catch (e) {
+        console.error('加载阅读数据失败', e);
+      }
+    }
+
+    async function loadWritingData() {
+      try {
+        const res = await fetch(`${API_BASE}/api/writing`);
+        const json = await res.json();
+        if (json.success) writingData = json.data;
+      } catch (e) {
+        console.error('加载写作数据失败', e);
+      }
+    }
+
     // 初始化
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
       checkLoggedIn();
+      await Promise.all([loadVocabData(), loadReadingData(), loadWritingData()]);
       initVocabFilter();
       loadListeningData();
     });
