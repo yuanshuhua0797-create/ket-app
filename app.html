@@ -1127,9 +1127,18 @@
 
     function speakWord(text) {
       if (!text) return;
+      speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'en-US';
-      utterance.rate = 0.9;
+      utterance.lang = 'en-GB';
+      utterance.rate = 0.85;
+      utterance.pitch = 1;
+      // 尝试选择最好的英文语音
+      const voices = speechSynthesis.getVoices();
+      const englishVoice = voices.find(v => v.lang.includes('en-GB')) ||
+                          voices.find(v => v.lang.includes('en-US') && v.name.includes('Google')) ||
+                          voices.find(v => v.lang.includes('en')) ||
+                          voices[0];
+      if (englishVoice) utterance.voice = englishVoice;
       speechSynthesis.speak(utterance);
     }
 
