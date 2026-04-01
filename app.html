@@ -1127,19 +1127,17 @@
 
     function speakWord(text) {
       if (!text) return;
-      speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'en-GB';
-      utterance.rate = 0.85;
-      utterance.pitch = 1;
-      // 尝试选择最好的英文语音
-      const voices = speechSynthesis.getVoices();
-      const englishVoice = voices.find(v => v.lang.includes('en-GB')) ||
-                          voices.find(v => v.lang.includes('en-US') && v.name.includes('Google')) ||
-                          voices.find(v => v.lang.includes('en')) ||
-                          voices[0];
-      if (englishVoice) utterance.voice = englishVoice;
-      speechSynthesis.speak(utterance);
+      // 使用 Google 翻译发音引擎
+      const url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=en&client=gtx`;
+      const audio = new Audio(url);
+      audio.play().catch(e => {
+        console.log('Google TTS 播放失败，尝试备用方案');
+        // 备用：使用系统语音
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-GB';
+        utterance.rate = 0.9;
+        speechSynthesis.speak(utterance);
+      });
     }
 
     function flipCard() {
