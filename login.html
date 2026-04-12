@@ -1,11 +1,17 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>登录 - KET备考APP</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
       font-family: 'Segoe UI', 'PingFang SC', system-ui, sans-serif;
       background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
@@ -15,19 +21,26 @@
       justify-content: center;
       padding: 20px;
     }
+
     .container {
       background: white;
       border-radius: 24px;
       padding: 40px 32px;
       width: 100%;
       max-width: 420px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
     }
+
     .logo {
       text-align: center;
       margin-bottom: 32px;
     }
-    .logo-emoji { font-size: 48px; margin-bottom: 8px; }
+
+    .logo-emoji {
+      font-size: 48px;
+      margin-bottom: 8px;
+    }
+
     .logo-title {
       font-size: 24px;
       font-weight: 800;
@@ -35,11 +48,13 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
+
     .logo-subtitle {
       font-size: 13px;
       color: #718096;
       margin-top: 4px;
     }
+
     .tabs {
       display: flex;
       background: #F7FAFC;
@@ -47,6 +62,7 @@
       padding: 4px;
       margin-bottom: 24px;
     }
+
     .tab {
       flex: 1;
       padding: 12px;
@@ -58,18 +74,24 @@
       color: #718096;
       transition: all 0.2s;
     }
+
     .tab.active {
       background: white;
       color: #6C63FF;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
     }
-    .form-group { margin-bottom: 16px; }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
     .form-label {
       font-size: 13px;
       font-weight: 600;
       color: #2D3748;
       margin-bottom: 6px;
     }
+
     .form-input {
       width: 100%;
       padding: 12px 16px;
@@ -79,9 +101,11 @@
       outline: none;
       transition: border-color 0.2s;
     }
+
     .form-input:focus {
       border-color: #6C63FF;
     }
+
     .btn-primary {
       width: 100%;
       padding: 14px;
@@ -95,18 +119,27 @@
       transition: opacity 0.2s, transform 0.15s;
       margin-top: 8px;
     }
-    .btn-primary:hover { opacity: 0.92; }
-    .btn-primary:active { transform: scale(0.98); }
+
+    .btn-primary:hover {
+      opacity: 0.92;
+    }
+
+    .btn-primary:active {
+      transform: scale(0.98);
+    }
+
     .btn-primary:disabled {
       opacity: 0.5;
       cursor: not-allowed;
     }
+
     .avatar-grid {
       display: grid;
       grid-template-columns: repeat(6, 1fr);
       gap: 8px;
       margin-bottom: 16px;
     }
+
     .avatar-item {
       font-size: 28px;
       padding: 8px;
@@ -116,45 +149,61 @@
       text-align: center;
       transition: all 0.2s;
     }
+
     .avatar-item:hover {
       border-color: #6C63FF;
       transform: scale(1.1);
     }
+
     .avatar-item.selected {
       border-color: #6C63FF;
       background: #F8F7FF;
       transform: scale(1.1);
     }
+
     .error-msg {
       color: #E53E3E;
       font-size: 13px;
       margin-top: 8px;
       display: none;
     }
-    .error-msg.show { display: block; }
+
+    .error-msg.show {
+      display: block;
+    }
+
     .success-msg {
       color: #38A169;
       font-size: 13px;
       margin-top: 8px;
       display: none;
     }
-    .success-msg.show { display: block; }
+
+    .success-msg.show {
+      display: block;
+    }
+
     .footer {
       text-align: center;
       font-size: 12px;
       color: #A0AEC0;
       margin-top: 24px;
     }
+
     @media (max-width: 480px) {
       .container {
         padding: 32px 24px;
         border-radius: 20px 20px 0 0;
         margin: auto 0 0;
       }
-      body { align-items: flex-end; }
+
+      body {
+        align-items: flex-end;
+      }
     }
   </style>
 </head>
+
 <body>
   <div class="container">
     <div class="logo">
@@ -209,7 +258,7 @@
   </div>
 
   <script>
-    const API_BASE = 'http://127.0.0.1:3001';
+    const API_BASE = 'https://ket-app-backend.onrender.com';
     const avatars = ['😊', '😄', '🎯', '🚀', '⭐', '🔥', '📖', '💪', '🌟', '🎉', '🏆', '💡'];
     let selectedAvatar = '😊';
 
@@ -360,4 +409,5 @@
     }
   </script>
 </body>
+
 </html>
