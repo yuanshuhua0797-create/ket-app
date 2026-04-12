@@ -1516,16 +1516,18 @@
     }
 
     function updateProgressUI(progress) {
+      if (!progress) return;
+
       // 更新今日统计
-      document.getElementById('todayWords').textContent = progress.today_words || 0;
-      document.getElementById('todayXP').textContent = progress.today_xp || 0;
-      document.getElementById('todayAccuracy').textContent = progress.accuracy ? Math.round(progress.accuracy) + '%' : '0%';
-      document.getElementById('streakDisplay').textContent = `🔥 ${progress.streak || 0}天`;
+      if (document.getElementById('todayWords')) document.getElementById('todayWords').textContent = progress.today_words || 0;
+      if (document.getElementById('todayXP')) document.getElementById('todayXP').textContent = progress.today_xp || 0;
+      if (document.getElementById('todayAccuracy')) document.getElementById('todayAccuracy').textContent = progress.accuracy ? Math.round(progress.accuracy) + '%' : '0%';
+      if (document.getElementById('streakDisplay')) document.getElementById('streakDisplay').textContent = `🔥 ${progress.streak || 0}天`;
 
       // 更新总体进度
       const overall = progress.overall || 0;
-      document.getElementById('overallProgress').textContent = overall + '%';
-      document.getElementById('progressFill').style.width = overall + '%';
+      if (document.getElementById('overallProgress')) document.getElementById('overallProgress').textContent = overall + '%';
+      if (document.getElementById('progressFill')) document.getElementById('progressFill').style.width = overall + '%';
 
       // 更新技能进度
       const skills = progress.skills || {};
@@ -1546,13 +1548,15 @@
             <div class="activity-xp">+${act.xp} XP</div>
           </div>
         `).join('');
-        document.getElementById('recentActivities').innerHTML = activitiesHtml;
+        if (document.getElementById('recentActivities')) document.getElementById('recentActivities').innerHTML = activitiesHtml;
       }
     }
 
     function updateSkillBar(skill, percent) {
-      document.getElementById(skill + 'SkillBar').style.width = percent + '%';
-      document.getElementById(skill + 'SkillPercent').textContent = percent + '%';
+      const bar = document.getElementById(skill + 'SkillBar');
+      const text = document.getElementById(skill + 'SkillPercent');
+      if (bar) bar.style.width = percent + '%';
+      if (text) text.textContent = percent + '%';
     }
 
     function getActivityIcon(type) {
