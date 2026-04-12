@@ -1127,17 +1127,23 @@
 
     function speakWord(text) {
       if (!text) return;
-      // 使用 Google 翻译发音引擎
-      const url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=en&client=gtx`;
+      
+      // 使用有道词典发音引擎 (1: 英音, 2: 美音)
+      const url = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(text)}&type=1`;
       const audio = new Audio(url);
-      audio.play().catch(e => {
-        console.log('Google TTS 播放失败，尝试备用方案');
-        // 备用：使用系统语音
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'en-GB';
-        utterance.rate = 0.9;
-        speechSynthesis.speak(utterance);
-      });
+      
+      const playPromise = audio.play();
+      
+      if (playPromise !== undefined) {
+        playPromise.catch(error => {
+          console.warn('网络发音失败，尝试系统语音:', error);
+          // 备用：使用系统语音
+          const utterance = new SpeechSynthesisUtterance(text);
+          utterance.lang = 'en-GB';
+          utterance.rate = 0.9;
+          window.speechSynthesis.speak(utterance);
+        });
+      }
     }
 
     function flipCard() {
@@ -1196,7 +1202,10 @@
             <div style="margin-top:16px;font-weight:600;">${item.question}</div>
             <div style="margin-top:12px;">
               ${item.options.map((opt, i) => `
-                <div class="reading-option" onclick="checkReadingAnswer(this, ${i}, ${item.answer})">
+                <div class="reading-option" 
+                     data-index="${i}" 
+                     data-correct="${item.answer}" 
+                     onclick="checkReadingAnswer(this)">
                   ${String.fromCharCode(65+i)}. ${opt}
                 </div>
               `).join('')}
@@ -1218,11 +1227,17 @@
       document.getElementById('readingPage').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    function checkReadingAnswer(el, selected, correct) {
+    function checkReadingAnswer(el) {
+      const selected = parseInt(el.dataset.index);
+      const correct = parseInt(el.dataset.correct);
       const parent = el.parentElement;
+      
       parent.querySelectorAll('.reading-option').forEach(opt => {
         opt.classList.remove('selected');
-        if (parseInt(opt.onclick.toString().match(/\d+/)[2]) === correct) {
+        const optCorrect = parseInt(opt.dataset.correct);
+        const optIndex = parseInt(opt.dataset.index);
+        
+        if (optIndex === optCorrect) {
           opt.classList.add('correct');
         }
       });
@@ -1298,7 +1313,10 @@
           <div style="margin-top: 12px;"><strong>${item.question}</strong></div>
           <div style="margin-top: 12px;">
             ${item.options.map((opt, i) => `
-              <div class="reading-option" onclick="checkListeningAnswer(this, ${i}, ${item.answer})">
+              <div class="reading-option" 
+                   data-index="${i}" 
+                   data-correct="${item.answer}"
+                   onclick="checkListeningAnswer(this)">
                 ${String.fromCharCode(65 + i)}. ${opt}
               </div>
             `).join('')}
@@ -1358,11 +1376,17 @@
       };
     }
 
-    function checkListeningAnswer(el, selected, correct) {
+    function checkListeningAnswer(el) {
+      const selected = parseInt(el.dataset.index);
+      const correct = parseInt(el.dataset.correct);
       const parent = el.parentElement;
+      
       parent.querySelectorAll('.reading-option').forEach(opt => {
         opt.classList.remove('selected');
-        if (parseInt(opt.onclick.toString().match(/\d+/)[2]) === correct) {
+        const optCorrect = parseInt(opt.dataset.correct);
+        const optIndex = parseInt(opt.dataset.index);
+        
+        if (optIndex === optCorrect) {
           opt.classList.add('correct');
         }
       });
