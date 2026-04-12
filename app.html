@@ -1163,9 +1163,9 @@
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            user_id: currentUser.id,
-            word: vocabData[currentVocabIndex].word,
-            rating
+            userId: currentUser.id,
+            word: filtered[currentVocabIndex].word,
+            rating: rating
           })
         });
       } catch (err) {
@@ -1205,7 +1205,8 @@
                 <div class="reading-option" 
                      data-index="${i}" 
                      data-correct="${item.answer}" 
-                     onclick="checkReadingAnswer(this)">
+                     data-set-id="${start + idx}"
+                     onclick="checkReadingAnswer(this, 1)">
                   ${String.fromCharCode(65+i)}. ${opt}
                 </div>
               `).join('')}
@@ -1227,11 +1228,16 @@
       document.getElementById('readingPage').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    function checkReadingAnswer(el) {
+    function checkReadingAnswer(el, totalPoints) {
       const selected = parseInt(el.dataset.index);
       const correct = parseInt(el.dataset.correct);
+      const setId = parseInt(el.dataset.setId);
       const parent = el.parentElement;
       
+      // 防止重复点击
+      if (parent.dataset.answered === 'true') return;
+      parent.dataset.answered = 'true';
+
       parent.querySelectorAll('.reading-option').forEach(opt => {
         opt.classList.remove('selected');
         const optCorrect = parseInt(opt.dataset.correct);
@@ -1245,11 +1251,11 @@
       if (selected === correct) {
         el.classList.add('selected');
         showToast('✅ 正确！+10 XP');
-        saveProgress('reading', 10, true);
+        saveProgress('reading', { setId, score: 1, total: 1 });
       } else {
         el.classList.add('wrong');
         showToast('❌ 再想想');
-        saveProgress('reading', 0, false);
+        saveProgress('reading', { setId, score: 0, total: 1 });
       }
     }
 
@@ -1316,7 +1322,8 @@
               <div class="reading-option" 
                    data-index="${i}" 
                    data-correct="${item.answer}"
-                   onclick="checkListeningAnswer(this)">
+                   data-set-id="${actualIndex}"
+                   onclick="checkListeningAnswer(this, 1)">
                 ${String.fromCharCode(65 + i)}. ${opt}
               </div>
             `).join('')}
@@ -1376,11 +1383,15 @@
       };
     }
 
-    function checkListeningAnswer(el) {
+    function checkListeningAnswer(el, totalPoints) {
       const selected = parseInt(el.dataset.index);
       const correct = parseInt(el.dataset.correct);
+      const setId = parseInt(el.dataset.setId);
       const parent = el.parentElement;
       
+      if (parent.dataset.answered === 'true') return;
+      parent.dataset.answered = 'true';
+
       parent.querySelectorAll('.reading-option').forEach(opt => {
         opt.classList.remove('selected');
         const optCorrect = parseInt(opt.dataset.correct);
@@ -1394,11 +1405,11 @@
       if (selected === correct) {
         el.classList.add('selected');
         showToast('✅ 正确！+10 XP');
-        saveProgress('listening', 10, true);
+        saveProgress('listening', { setId, score: 1, total: 1 });
       } else {
         el.classList.add('wrong');
         showToast('❌ 再想想');
-        saveProgress('listening', 0, false);
+        saveProgress('listening', { setId, score: 0, total: 1 });
       }
     }
 
@@ -1483,7 +1494,14 @@
       refEl.style.display = 'block';
       refEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
       showToast('✅ 已提交！+15 XP');
-      saveProgress('writing', 15, true);
+      
+      const words = area.value.trim().split(/\s+/).filter(w => w).length;
+      saveProgress('writing', { 
+        promptId: index, 
+        wordCount: words,
+        targetMin: writingData[index].wordMin,
+        targetMax: writingData[index].wordMax
+      });
     }
 
     // 进度模块
@@ -1547,15 +1565,14 @@
       return icons[type] || '⭐';
     }
 
-    async function saveProgress(type, xp, correct) {
+    async function saveProgress(type, data) {
       try {
         await fetch(`${API_BASE}/api/${type}-progress`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            user_id: currentUser.id,
-            xp,
-            correct
+            userId: currentUser.id,
+            ...data
           })
         });
         loadProgress();
